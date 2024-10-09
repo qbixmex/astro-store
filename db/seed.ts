@@ -14,7 +14,7 @@ const users = [
 		role: 'admin',
 	},
 	{
-		id: "22c57930-d228-41c7-84fa-ce2444b29e59",
+		id: "931af05e-5662-4701-b775-d4937378a3d5",
 		name: 'Daniel Gonzalez',
 		email: 'qbixmex@gmail.com',
 		password: "$2a$10$CPvBuQedmm23HpaTFJni5Ome.5tdL2tlcpc/TcVjRPfu.O96QQIIK",

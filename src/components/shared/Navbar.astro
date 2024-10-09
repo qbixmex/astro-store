@@ -55,7 +55,7 @@ const { isLoggedIn } = Astro.locals;
 
 const logoutElement = document.getElementById("logout") as HTMLLIElement;
 
-logoutElement.addEventListener("click", () => {
+logoutElement && logoutElement.addEventListener("click", () => {
   // actions.logoutSession();
   // window.location.replace("/login");
   console.log("Loggin out ...");

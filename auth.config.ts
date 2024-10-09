@@ -6,6 +6,10 @@ import bcrypt from 'bcryptjs';
 export default defineConfig({
   providers: [
     Credentials({
+      credentials: {
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" },
+      },
       authorize: async ({ email, password }) => {
         //* Find user by email.
         const [user] = await db.
@@ -27,6 +31,8 @@ export default defineConfig({
 
         //* Remove password from user object
         const {password: _, ...authUser} = user;
+
+        console.log("AUTHENTICATED USER:", authUser);
 
         return authUser;
       },

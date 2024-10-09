@@ -1,6 +1,7 @@
-import { defineAction, z } from 'astro:actions';
+import { defineAction } from 'astro:actions';
+import { z } from 'astro:content';
 
-export const registerUser = defineAction({
+const registerUser = defineAction({
   accept: 'form',
   input: z.object({
     name: z.string().min(2),
@@ -11,3 +12,5 @@ export const registerUser = defineAction({
     return { ok: true };
   },
 });
+
+export default registerUser;

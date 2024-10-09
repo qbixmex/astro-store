@@ -1,3 +1,3 @@
-export * from './login.action';
-export * from './logout.action';
-export * from './register.action';
+export { default as loginUser } from './login.action';
+export { default as logout } from './logout.action';
+export { default as registerUser } from './register.action';
