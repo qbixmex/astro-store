@@ -1,7 +1,7 @@
 ---
 import { Icon } from 'astro-icon/components';
 
-const { isLoggedIn } = Astro.locals;
+const { isLoggedIn, user } = Astro.locals;
 ---
 
 <nav class="flex justify-between px-20 py-10 items-center bg-slate-100">
@@ -33,17 +33,17 @@ const { isLoggedIn } = Astro.locals;
 
       <!-- LOGOUT -->
       {isLoggedIn && (
-        <li id="protected" class="font-semibold text-gray-700">
-          <a href="/protected" class="flex items-center gap-2">
+        <li id="dashboard" class="font-semibold text-gray-700">
+          <a href="/dashboard" class="flex items-center gap-2">
             <Icon name="protected-page" class="text-xl" />
-            <span>Protected</span>
+            <span>Admin</span>
           </a>
         </li>
-        <li id="logout" class="font-semibold text-gray-700">
-          <a href="#" class="flex items-center gap-2">
+        <li class="font-semibold text-gray-700">
+          <button id="logout" type="button" class="flex items-center gap-2">
             <span>Logout</span>
             <Icon name="logout" class="text-xl" />
-          </a>
+          </button>
         </li>
       )}
     </ul>
@@ -51,13 +51,14 @@ const { isLoggedIn } = Astro.locals;
 </nav>
 
 <script>
-// import { actions } from "astro:actions";
+import { signOut } from "auth-astro/client";
 
-const logoutElement = document.getElementById("logout") as HTMLLIElement;
+const logoutBNT = document.getElementById("logout") as HTMLButtonElement | null;
 
-logoutElement && logoutElement.addEventListener("click", () => {
-  // actions.logoutSession();
-  // window.location.replace("/login");
-  console.log("Loggin out ...");
-});
+if (logoutBNT) {
+  logoutBNT.addEventListener("click", async () => {
+    await signOut();
+    window.location.replace("/login");
+  });
+}
 </script>

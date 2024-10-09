@@ -1,10 +1,10 @@
 import { defineAction } from 'astro:actions';
 
-const logout = defineAction({
+const logoutSession = defineAction({
   accept: 'json',
-  handler: async (_, { cookies }) => {
+  handler: async (_, { cookies: _cookies }) => {
     return { ok: true };
   },
 });
 
-export default logout;
+export default logoutSession;

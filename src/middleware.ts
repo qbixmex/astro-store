@@ -1,33 +1,37 @@
 import { defineMiddleware } from 'astro:middleware';
+import { getSession } from 'auth-astro/server';
 
-// const notAuthenticatedRoutes = ['/login', '/register'];
+const notAuthenticatedRoutes = ['/login', '/register'];
 
 export const onRequest = defineMiddleware(
   async (context, next) => {
-    const isLoggedIn = false;
+    const session = await getSession(context.request);
+    const user = session?.user;
+
+    const isLoggedIn = !!session;
     
-    // TODO:
     context.locals.isLoggedIn = isLoggedIn;
-    // context.locals.user = null;
+    context.locals.user = null;
 
-    // if (context.locals.user) {
+    if (user) {
       // TODO:
-      // locals.user = {
-      //   avatar: user.photoURL ?? '',
-      //   email: user.email!,
-      //   name: user.displayName!,
-      //   emailVerified: user.emailVerified,
-      // };
-    // }
+      context.locals.user = {
+        name: session?.user?.name!,
+        email: session?.user?.email!,
+        // avatar: context.user.photoURL ?? '',
+        // emailVerified: user.emailVerified,
+      };
+      // context.locals.isAdmin = user.role === "admin";
+    }
 
-    // TODO: Eventualmente tenemos que controlar el acceso por roles
-    // if (!isLoggedIn && context.url.pathname.startsWith('/dashboard')) {
-    //   return context.redirect('/');
-    // }
+    // TODO: Eventually we have to control access by roles
+    if (!isLoggedIn && context.url.pathname.startsWith('/dashboard')) {
+      return context.redirect('/');
+    }
 
-    // if (isLoggedIn && notAuthenticatedRoutes.includes(context.url.pathname)) {
-    //   return context.redirect('/');
-    // }
+    if (isLoggedIn && notAuthenticatedRoutes.includes(context.url.pathname)) {
+      return context.redirect('/');
+    }
 
     return next();
   }
