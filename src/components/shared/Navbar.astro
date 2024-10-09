@@ -1,0 +1,63 @@
+---
+import { Icon } from 'astro-icon/components';
+
+const { isLoggedIn } = Astro.locals;
+---
+
+<nav class="flex justify-between px-20 py-10 items-center bg-slate-100">
+  <h1 class="text-xl text-gray-800 font-bold">Astro Shop</h1>
+  <div class="flex items-center">
+    <div class="flex items-center">
+      <Icon name="magnify" class="text-black text-xl" />
+      <input class="ml-2 outline-none bg-transparent font-" type="text" name="search" id="search" placeholder="Search..." />
+    </div>
+
+    <ul class="flex items-center space-x-6">
+      <!-- HOME -->
+      <li id="home" class="font-semibold text-gray-700">
+        <a href="/" class="flex items-center gap-2">
+          <Icon name="home" class="text-xl" />
+          <span>Home</span>
+        </a>
+      </li>
+
+      <!-- LOGIN -->
+      {!isLoggedIn && (
+        <li id="login" class="font-semibold text-gray-700">
+          <a href="/login" class="flex items-center gap-2">
+            <Icon name="login" class="text-xl" />
+            <span>Login</span>
+          </a>
+        </li>
+      )}
+
+      <!-- LOGOUT -->
+      {isLoggedIn && (
+        <li id="protected" class="font-semibold text-gray-700">
+          <a href="/protected" class="flex items-center gap-2">
+            <Icon name="protected-page" class="text-xl" />
+            <span>Protected</span>
+          </a>
+        </li>
+        <li id="logout" class="font-semibold text-gray-700">
+          <a href="#" class="flex items-center gap-2">
+            <span>Logout</span>
+            <Icon name="logout" class="text-xl" />
+          </a>
+        </li>
+      )}
+    </ul>
+  </div>
+</nav>
+
+<script>
+// import { actions } from "astro:actions";
+
+const logoutElement = document.getElementById("logout") as HTMLLIElement;
+
+logoutElement.addEventListener("click", () => {
+  // actions.logoutSession();
+  // window.location.replace("/login");
+  console.log("Loggin out ...");
+});
+</script>
