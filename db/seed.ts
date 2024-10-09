@@ -11,7 +11,7 @@ const users = [
 		name: 'Albert Einstein',
 		email: 'albert@gmail.com',
 		password: "$2a$10$BWTWhshbI2nbEtA/ixrSw.rLLtwc4OvWEZy4abN9MAKFqLvHghI5y",
-		role: 'admin',
+		role: 'user',
 	},
 	{
 		id: "931af05e-5662-4701-b775-d4937378a3d5",

@@ -2,6 +2,7 @@ import { defineConfig } from 'auth-astro';
 import Credentials from "@auth/core/providers/credentials";
 import { db, eq, User } from 'astro:db';
 import bcrypt from 'bcryptjs';
+import type { AdapterUser } from '@auth/core/adapters';
 
 export default defineConfig({
   providers: [
@@ -29,13 +30,27 @@ export default defineConfig({
           throw new Error("Invalid credentials");
         }
 
-        //* Remove password from user object
-        const {password: _, ...authUser} = user;
-
-        console.log("AUTHENTICATED USER:", authUser);
-
-        return authUser;
+        return {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+          createdAt: user.createdAt.toISOString(),
+        };
       },
     }),
   ],
+  callbacks: {
+    jwt: ({ token, user }) => {
+      if (user) {
+        token.user = user;
+      }
+      return token;
+    },
+    session: ({ session, token }) => {
+      const { createdAt, ...tokenUser } = token.user as AdapterUser;
+      session.user = tokenUser;
+      return session;
+    },
+  }
 });

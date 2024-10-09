@@ -12,20 +12,19 @@ export const onRequest = defineMiddleware(
     
     context.locals.isLoggedIn = isLoggedIn;
     context.locals.user = null;
+    context.locals.isAdmin = false;
 
     if (user) {
-      // TODO:
       context.locals.user = {
         name: session?.user?.name!,
         email: session?.user?.email!,
-        // avatar: context.user.photoURL ?? '',
-        // emailVerified: user.emailVerified,
+        // TODO: avatar: context.user.photoURL ?? '',
+        // TODO: emailVerified: user.emailVerified,
       };
-      // context.locals.isAdmin = user.role === "admin";
+      context.locals.isAdmin = user.role === "admin";
     }
 
-    // TODO: Eventually we have to control access by roles
-    if (!isLoggedIn && context.url.pathname.startsWith('/dashboard')) {
+    if (!context.locals.isAdmin && context.url.pathname.startsWith('/dashboard')) {
       return context.redirect('/');
     }
 

@@ -1,7 +1,7 @@
 ---
 import { Icon } from 'astro-icon/components';
 
-const { isLoggedIn, user } = Astro.locals;
+const { isLoggedIn, isAdmin } = Astro.locals;
 ---
 
 <nav class="flex justify-between px-20 py-10 items-center bg-slate-100">
@@ -21,29 +21,28 @@ const { isLoggedIn, user } = Astro.locals;
         </a>
       </li>
 
-      <!-- LOGIN -->
-      {!isLoggedIn && (
-        <li id="login" class="font-semibold text-gray-700">
-          <a href="/login" class="flex items-center gap-2">
-            <Icon name="login" class="text-xl" />
-            <span>Login</span>
-          </a>
-        </li>
-      )}
-
-      <!-- LOGOUT -->
-      {isLoggedIn && (
+      {isAdmin && (
         <li id="dashboard" class="font-semibold text-gray-700">
           <a href="/dashboard" class="flex items-center gap-2">
             <Icon name="protected-page" class="text-xl" />
             <span>Admin</span>
           </a>
         </li>
+      )}
+
+      {isLoggedIn ? (
         <li class="font-semibold text-gray-700">
           <button id="logout" type="button" class="flex items-center gap-2">
             <span>Logout</span>
             <Icon name="logout" class="text-xl" />
           </button>
+        </li>
+      ) : (
+        <li id="login" class="font-semibold text-gray-700">
+          <a href="/login" class="flex items-center gap-2">
+            <Icon name="login" class="text-xl" />
+            <span>Login</span>
+          </a>
         </li>
       )}
     </ul>
