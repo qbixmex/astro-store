@@ -1,6 +1,11 @@
 /// <reference path="../.astro/types.d.ts" />
 
-import { User } from "@/interfaces"; 
+interface User {
+  email: string;
+  name: string;
+  avatar: string;
+  emailVerified: boolean;
+}
 
 declare namespace App {
   interface Locals {
@@ -11,6 +16,7 @@ declare namespace App {
 
 interface ImportMetaEnv {
   readonly PUBLIC_DOMAIN: string;
+  // more env variables...
 }
 
 interface ImportMeta {
