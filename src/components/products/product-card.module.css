@@ -1,0 +1,11 @@
+.card {
+  @apply bg-slate-50 p-4 rounded text-slate-800;
+}
+
+.price {
+  @apply text-right font-bold;
+}
+
+.image {
+  @apply w-full h-auto rounded object-cover;
+}
