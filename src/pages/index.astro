@@ -1,5 +1,6 @@
 ---
 import { ProductList } from '@/components/products';
+import Pagination from '@/components/shared/Pagination.astro';
 import MainLayout from '@/layouts/MainLayout.astro';
 // import { getSession } from 'auth-astro/server';
 import { actions } from 'astro:actions';
@@ -8,7 +9,13 @@ import { actions } from 'astro:actions';
 
 // const { user } = session ?? {};
 
-const { data, error } = await actions.getProductsByPage({});
+const searchParams = Astro.url.searchParams;
+const pageParam = Number(searchParams.get('page') ?? 1);
+
+const { data, error } = await actions.getProductsByPage({
+  page: pageParam,
+  limit: 16,
+});
 
 if (error) {
   console.error(error);
@@ -21,8 +28,9 @@ if (error) {
   description="Welcome to the home page"
   robots="index, follow"
 >
-  <div class="container mx-auto px-5">
-    <h1 class="text-5xl text-purple-400 mb-5">Product List</h1>
+  <div class="container mx-auto px-5 mt-[150px]">
+    <h1 class="text-5xl text-slate-100 mb-10">All Products</h1>
     <ProductList products={data?.products ?? []} client:idle />
-</div>
+    <Pagination totalPages={data?.totalPages ?? 0} />
+  </div>
 </MainLayout>
