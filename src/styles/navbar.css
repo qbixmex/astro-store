@@ -1,0 +1,30 @@
+#wrapper {
+  @apply flex items-center gap-5;
+}
+#search {
+  @apply flex items-center gap-2;
+  & input {
+    @apply ml-2 outline-none bg-transparent font-light border border-slate-400 px-3 py-2 rounded-md;
+  }
+}
+#navigation {
+  @apply flex justify-between px-20 py-10 items-center;
+}
+#brand {
+  @apply text-2xl text-sky-400 font-light italic;
+}
+#menu {
+  @apply flex items-center space-x-6;
+}
+.menu-item {
+  @apply font-semibold text-gray-300 hover:text-gray-400 transition-colors duration-300 ease-in-out;
+  & a {
+    @apply flex items-center gap-2;
+  }
+}
+.icon {
+  @apply text-xl;
+}
+.login {
+  @apply flex items-center gap-2;
+}

@@ -25,15 +25,15 @@ const Role = defineTable({
 const Product = defineTable({
   columns: {
     id: column.text({ primaryKey: true }),
-    stock: column.number(),
-    slug: column.text({ unique: true }),
-    price: column.number(),
-    sizes: column.text(),
-    type: column.text(),
-    tags: column.text(),
     title: column.text(),
+    slug: column.text({ unique: true }),
     description: column.text(),
+    price: column.number(),
     gender: column.text(),
+    type: column.text(),
+    stock: column.number(),
+    tags: column.text(),
+    sizes: column.text(),
 
     //* Relationship
     user: column.text({ references: () => User.columns.id }),

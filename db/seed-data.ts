@@ -24,7 +24,7 @@ export const seedProducts: SeedProduct[] = [
     slug: 'mens_chill_crew_neck_sweatshirt',
     type: 'shirts',
     tags: ['sweatshirt'],
-    title: 'Men’s Chill Crew Neck Sweatshirt',
+    title: "Men's Chill Crew Neck Sweatshirt",
     gender: 'men',
   },
   {
