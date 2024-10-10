@@ -19,6 +19,7 @@ interface ImportMetaEnv {
   readonly PUBLIC_DOMAIN: string;
   readonly PUBLIC_AUTH_TRUST_HOST: string;
   readonly PUBLIC_AUTH_SECRET: string;
+  readonly PUBLIC_URL: string;
   // more env variables...
 }
 

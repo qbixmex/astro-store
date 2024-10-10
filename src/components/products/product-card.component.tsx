@@ -1,3 +1,4 @@
+import { useState } from "react";
 import type { ProductWithImages } from "@/interfaces";
 import styles from "./product-card.module.css";
 import { formatCurrency } from "@/utils";
@@ -7,19 +8,31 @@ type Props = {
 };
 
 const ProductCard: React.FC<Readonly<Props>> = ({ product }) => {
-  const productImages = product.images.split(',');
+
+  const images = product.images.split(',').map((image) => {
+    return image.startsWith("http")
+      ? image
+      : `${import.meta.env.PUBLIC_URL}/assets/products/${image}`;
+  });
+
+  const [currentImage, setCurrentImage] = useState(images.at(0));
 
   return (
-    <section className={styles.card}>
-      <a href={`/products/${product.slug}`}>
+    <a href={`/products/${product.slug}`} title={`Check more "${product.title}" details`}>
+      <div className={styles.card}>
         <img
-          src={`/assets/products/${productImages.at(1)}`}
+          src={currentImage}
           className={styles.image}
+          alt={product.title}
+          onMouseEnter={() => setCurrentImage(images.at(1) ?? images.at(0))}
+          onMouseLeave={() => setCurrentImage(images.at(0))}
         />
-        <h3>{product.title}</h3>
-      </a>
-      <p className={styles.price}>{formatCurrency(product.price)}</p>
-    </section>
+        <div className={styles.details}>
+          <h2 className={styles.title}>{product.title}</h2>
+          <p className={styles.price}>{formatCurrency(product.price)}</p>
+        </div>
+      </div>
+    </a>
   );
 
 };
