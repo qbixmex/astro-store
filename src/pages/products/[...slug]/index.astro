@@ -40,13 +40,7 @@ const { product, images } = data;
             product.sizes
               .split(",")
               .map((size) => (
-              <li
-                data-size={size}
-                class:list={["size", {
-                  "unselected-size": true,
-                  "selected-size": false,
-                }]}
-              >
+              <li data-size={size} class="size">
                 {size}
               </li>
             ))
@@ -56,16 +50,16 @@ const { product, images } = data;
         <h3>Quantity</h3>
 
         <section class="quantityButtons">
-          <button class="quantityBtn">
+          <button id="decrement-quantity" class="quantityBtn">
             <Icon name="minus" size={22} />
           </button>
-          <input type="number" class="quantityInput" min="1" value="1" />
-          <button class="quantityBtn">
+          <input type="number" id="quantityInput" class="quantityInput" min="1" value="1" />
+          <button id="increment-quantity" class="quantityBtn">
             <Icon name="plus" size={22} />
           </button>
         </section>
 
-        <button class="cartBtn">
+        <button id="add-to-cart" class="cartBtn">
           <span>Add to cart</span>
           <Icon name="cart" class="cartIcon" />
         </button>
@@ -76,9 +70,59 @@ const { product, images } = data;
       </section>
     </section>
 
-    <input type="hidden" id="product-id" value={"product.id"} />
+    <input type="hidden" id="product-id" value={product.id} />
   </div>
 </MainLayout>
+
+<script>
+const sizeElements = document.querySelectorAll(".size");
+const quantityInput = document.getElementById("quantityInput") as HTMLInputElement;
+const productId = document.getElementById("product-id") as HTMLInputElement;
+const decrementQuantity = document.getElementById("decrement-quantity") as HTMLButtonElement;
+const incrementQuantity = document.getElementById("increment-quantity") as HTMLButtonElement;
+const addToCart = document.getElementById("add-to-cart") as HTMLButtonElement;
+
+sizeElements.forEach((size) => {
+  size.addEventListener("click", (event) => {
+    sizeElements.forEach((element) => element.classList.remove("selected-size"));
+    size.classList.add("selected-size");
+  });
+});
+
+let quantity = 1;
+const MINIMUM_QUANTITY = 1;
+const MAXIMUM_QUANTITY = 5;
+
+decrementQuantity.addEventListener("click", () => {
+  quantity = Math.max(quantity - 1, MINIMUM_QUANTITY);
+  quantityInput.value = quantity.toString();
+});
+
+incrementQuantity.addEventListener("click", () => {
+  quantity = Math.min(quantity + 1, MAXIMUM_QUANTITY);
+  quantityInput.value = quantity.toString();
+});
+
+addToCart.addEventListener("click", () => {
+  const selectedSize = document.querySelector(".selected-size") as HTMLLIElement | null;
+  const size = selectedSize?.dataset.size;
+
+  if (!size) {
+    alert("Please select a size !");
+    return;
+  }
+
+  addToCart.disabled = true;
+
+  const product = {
+    id: productId.value,
+    size,
+    quantity: quantityInput.value,
+  };
+
+  console.log(product);
+});
+</script>
 
 <style>
   .wrapper {
@@ -130,7 +174,7 @@ const { product, images } = data;
   }
 
   .cartBtn {
-    @apply flex justify-center items-center gap-2 rounded bg-purple-500 hover:bg-purple-800 text-neutral-50 p-3 w-full mb-5 transition-colors duration-300 ease-in-out;
+    @apply w-full lg:w-fit lg:ml-auto flex justify-center items-center gap-2 rounded bg-purple-500 hover:bg-purple-800 text-neutral-50 p-3 mb-5 transition-colors duration-300 ease-in-out;
   }
 
   .cartBtn span {
