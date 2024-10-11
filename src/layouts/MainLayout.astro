@@ -10,8 +10,8 @@ type Props = {
 		| "index, follow"
 		| "noindex, follow"
 		| "index, nofollow"
-		| "noindex, nofollow"
-	;
+		| "noindex, nofollow";
+	image?: string;
 };
 
 const {
@@ -31,11 +31,13 @@ const {
 		<meta name="description" content={description} />
 		<meta name="robots" content={robots} />
 	</head>
-	<body class="bg-slate-900 text-slate-50 min-h-screen">
+	<body>
 		<Navbar />
-		<main>
-			<slot />
-		</main>
-		<Footer />
+		<div id="layout">
+			<main id="content">
+				<slot />
+			</main>
+			<Footer />
+		</div>
 	</body>
 </html>

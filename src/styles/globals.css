@@ -1,3 +1,25 @@
+body {
+  min-height: 100vh;
+  @apply bg-slate-900 text-slate-50;
+}
+
+#layout {
+  display: grid;
+  grid-template-rows: 1fr 100px;
+}
+
+#content {
+  @apply h-full container mx-auto px-5 pt-36;
+}
+
+#footer {
+  @apply grid place-content-center;
+}
+
+.content h1 {
+  @apply text-5xl text-slate-100 mb-10;
+}
+
 .divisor {
   @apply h-0.5 w-full bg-gray-400/80 my-1;
 }
