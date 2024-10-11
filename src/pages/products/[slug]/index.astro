@@ -24,13 +24,12 @@ const { product, images } = data;
   >
   <!-- image={image} -->
   <div class="content">
-    <h1>{product.title}</h1>
-
     <section class="wrapper">
       
       <ProductSlideshow images={images} />
 
       <section class="details">
+        <h1>{product.title}</h1>
         <h2>{formatCurrency(product.price)}</h2>
 
         <h3>Sizes</h3>
@@ -82,7 +81,7 @@ const { product, images } = data;
 
 <style>
   .wrapper {
-    @apply grid grid-cols-1 md:grid-cols-2 w-full;
+    @apply grid grid-cols-1 lg:grid-cols-2 gap-10 w-full mb-10;
   }
 
   h2 {

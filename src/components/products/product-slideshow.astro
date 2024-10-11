@@ -1,22 +1,66 @@
 ---
+import "swiper/css";
+import "swiper/css/pagination";
 
 type Props = {
   images: string[];
 };
 
 const { images } = Astro.props;
+
+const fullImages = images.map((image) => {
+  return image.startsWith("http")
+    ? image
+    : `${import.meta.env.PUBLIC_URL}/assets/products/${image}`;
+});
 ---
 
-<section class="slideshow">
-  <img src={"/assets/products/" + images.at(0)} alt="Product image" />
-  <img src={"/assets/products/" + images.at(1)} alt="Product image" />
-</section>
+<!-- Slider main container -->
+<div class="swiper">
+  <!-- Additional required wrapper -->
+  <div class="swiper-wrapper">
+    <!-- Slides -->
+    {fullImages.map((image) => (
+      <div class="swiper-slide">
+        <img class="slideImage" src={image} alt="Product Image" />
+      </div>
+    ))}
+    
+  </div>
+
+  <!-- If we need pagination -->
+  <div class="swiper-pagination"></div>
+</div>
 
 <style>
-  img {
-    width: 90%;
-    height: auto;
+  .swiper {
+    width: 100%;
+    height: 700px;
+  }
+
+  .slideImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
     border-radius: 8px;
-    margin: 0 auto 20px;
   }
 </style>
+
+<script>
+import Swiper from "swiper";
+import { Pagination, Autoplay } from "swiper/modules";
+
+new Swiper('.swiper', {
+  // If we need pagination
+  pagination: {
+    el: '.swiper-pagination',
+  },
+
+  autoplay: {
+    delay: 5000,
+    pauseOnMouseEnter: true,
+  },
+
+  modules: [Pagination, Autoplay],
+});
+</script>
