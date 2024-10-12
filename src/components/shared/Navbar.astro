@@ -1,6 +1,7 @@
 ---
 import { Icon } from 'astro-icon/components';
 import "@/styles/navbar.css";
+import CartCounter from '@/components/cart/cart-counter.component';
 
 const { isLoggedIn, isAdmin } = Astro.locals;
 ---
@@ -18,6 +19,8 @@ const { isLoggedIn, isAdmin } = Astro.locals;
         placeholder="Search ..."
       />
     </section>
+
+    <CartCounter />
 
     <ul id="menu">
       <!-- HOME -->

@@ -1,0 +1,7 @@
+.cartLink {
+  @apply relative inline-block mx-5;
+}
+
+.cartCounter {
+  @apply absolute -top-3 -right-3 flex justify-center items-center bg-blue-400/80 text-white rounded-full w-6 h-6;
+}
