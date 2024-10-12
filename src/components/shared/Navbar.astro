@@ -1,0 +1,73 @@
+---
+import { Icon } from 'astro-icon/components';
+import "@/styles/navbar.css";
+import CartCounter from '@/components/cart/cart-counter.component';
+
+const { isLoggedIn, isAdmin } = Astro.locals;
+---
+
+<nav id="navigation">
+  <a href="/" id="brand">Astro Shop</a>
+  
+  <section id="wrapper">
+    <section id="search">
+      <Icon name="magnify" class="icon" />
+      <input
+        type="text"
+        name="search"
+        id="search"
+        placeholder="Search ..."
+      />
+    </section>
+
+    <CartCounter client:load transition:persist />
+
+    <ul id="menu">
+      <!-- HOME -->
+      <li id="home" class="menu-item">
+        <a href="/">
+          <Icon name="home" class="icon" />
+          <span>Home</span>
+        </a>
+      </li>
+
+      {isAdmin && (
+        <li id="dashboard" class="menu-item">
+          <a href="/dashboard">
+            <Icon name="dashboard" class="icon" />
+            <span>Dashboard</span>
+          </a>
+        </li>
+      )}
+
+      {isLoggedIn ? (
+        <li class="menu-item">
+          <button id="logout" type="button" class="login">
+            <Icon name="logout" class="icon" />
+            <span>Logout</span>
+          </button>
+        </li>
+      ) : (
+        <li id="login" class="menu-item">
+          <a href="/login">
+            <Icon name="login" class="icon" />
+            <span>Login</span>
+          </a>
+        </li>
+      )}
+    </ul>
+  </section>
+</nav>
+
+<script>
+import { signOut } from "auth-astro/client";
+
+const logoutBtn = document.getElementById("logout") as HTMLButtonElement | null;
+
+if (logoutBtn) {
+  logoutBtn.addEventListener("click", async () => {
+    await signOut();
+    window.location.replace("/login");
+  });
+}
+</script>

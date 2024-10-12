@@ -1,0 +1,45 @@
+---
+import Footer from '@/components/shared/Footer.astro';
+import Navbar from '@/components/shared/Navbar.astro';
+import { ViewTransitions } from 'astro:transitions';
+import "@/styles/globals.css";
+
+type Props = {
+	title: string;
+	description?: string;
+	robots?:
+		| "index, follow"
+		| "noindex, follow"
+		| "index, nofollow"
+		| "noindex, nofollow";
+	image?: string;
+};
+
+const {
+	title,
+	description = '',
+	robots = 'index, follow',
+} = Astro.props;
+---
+
+<html lang="es">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="viewport" content="width=device-width" />
+		<meta name="generator" content={Astro.generator} />
+		<title>{title}</title>
+		<meta name="description" content={description} />
+		<meta name="robots" content={robots} />
+		<ViewTransitions />
+	</head>
+	<body>
+		<Navbar />
+		<div id="layout">
+			<main id="content">
+				<slot />
+			</main>
+			<Footer />
+		</div>
+	</body>
+</html>

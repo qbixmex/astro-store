@@ -1,0 +1,27 @@
+---
+import "@/styles/pagination.css";
+import { Icon } from "astro-icon/components";
+
+type Props = {
+  totalPages: number;
+}
+
+const url = Astro.url;
+const pageParam = Number(url.searchParams.get("page") ?? 1);
+const { totalPages } = Astro.props;
+
+const currentPage = Math.max((pageParam > totalPages) ? totalPages : pageParam, 1);
+const path = url.pathname;
+---
+
+<section class="wrapper">
+  <a href={`${path}?page=${Math.max((currentPage - 1), 1)}`} class="paginationBtn">
+    <Icon name="left-chevron" class="paginationIcon" />
+    <span>previous</span>
+  </a>
+  <span class="current-page">Page {currentPage} of {totalPages}</span>
+  <a href={`${path}?page=${Math.min((currentPage + 1), totalPages)}`} class="paginationBtn">
+    <span>next</span>
+    <Icon name="right-chevron" class="paginationIcon" />
+  </a>
+</section>

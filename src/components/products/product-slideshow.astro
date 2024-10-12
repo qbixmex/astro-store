@@ -1,0 +1,68 @@
+---
+import "swiper/css";
+import "swiper/css/pagination";
+
+type Props = {
+  images: string[];
+};
+
+const { images } = Astro.props;
+
+const fullImages = images.map((image) => {
+  return image.startsWith("http")
+    ? image
+    : `${import.meta.env.PUBLIC_URL}/assets/products/${image}`;
+});
+---
+
+<!-- Slider main container -->
+<div class="swiper">
+  <!-- Additional required wrapper -->
+  <div class="swiper-wrapper">
+    <!-- Slides -->
+    {fullImages.map((image) => (
+      <div class="swiper-slide">
+        <img class="slideImage" src={image} alt="Product Image" />
+      </div>
+    ))}
+    
+  </div>
+
+  <!-- If we need pagination -->
+  <div class="swiper-pagination"></div>
+</div>
+
+<style>
+  .swiper {
+    width: 100%;
+    height: 700px;
+  }
+
+  .slideImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+</style>
+
+<script>
+import Swiper from "swiper";
+import { Pagination, Autoplay } from "swiper/modules";
+
+document.addEventListener("astro:page-load", () => {
+  new Swiper('.swiper', {
+    // If we need pagination
+    pagination: {
+      el: '.swiper-pagination',
+    },
+  
+    autoplay: {
+      delay: 5000,
+      pauseOnMouseEnter: true,
+    },
+  
+    modules: [Pagination, Autoplay],
+  });
+});
+</script>

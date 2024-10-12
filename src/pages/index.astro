@@ -1,16 +1,45 @@
 ---
+import { ProductList } from '@/components/products';
+import Pagination from '@/components/shared/Pagination.astro';
+import type { ProductWithImages } from '@/interfaces';
+import MainLayout from '@/layouts/MainLayout.astro';
+// import { getSession } from 'auth-astro/server';
+import { actions } from 'astro:actions';
 
+// const session = await getSession(Astro.request);
+
+// const { user } = session ?? {};
+
+const searchParams = Astro.url.searchParams;
+const pageParam = Number(searchParams.get('page') ?? 1);
+
+const { data, error } = await actions.getProductsByPage({
+  page: pageParam,
+  limit: 16,
+});
+
+const products: ProductWithImages[] = 
+  (error || data.products.length === 0)
+    ? []
+    : data.products;
+
+const totalPages = (error || data.totalPages === 0) ? 0 : data.totalPages;
+
+if (products.length === 0) {
+  return Astro.redirect(`/?page=${totalPages}`);
+}
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<MainLayout
+  title="All Products - Astro Shop"
+  description="Welcome to the home page"
+  robots="index, follow"
+  robots="index, follow"
+>
+  <div class="content">
+    <h1>All Products</h1>
+    <ProductList products={products} client:idle />
+    <Pagination totalPages={totalPages} />
+  </div>
+</MainLayout>
+

@@ -1,0 +1,111 @@
+.cart-layout {
+  @apply grid grid-cols-1 lg:grid-cols-2 gap-10;
+}
+
+.cart-items {
+  @apply order-2 md:order-1;
+}
+
+.sub-heading {
+  @apply text-2xl font-semibold mb-10;
+}
+
+.products {
+  @apply space-y-5 mb-10;
+}
+
+.product {
+  display: grid;
+  grid-template-columns: 150px 2fr;
+  gap: 20px;
+}
+
+.product-image {
+  @apply size-[150px];
+  & a img {
+    @apply size-[150px] rounded-md;
+  }
+}
+
+.product-details {
+  @apply w-auto flex flex-col gap-2;
+}
+
+.product-title {
+  @apply text-violet-400/90 text-lg font-semibold;
+}
+
+.product-size,
+.product-quantity {
+  font-weight: 700;
+  & span {
+    font-weight: 400;
+  }
+}
+
+.product-size {
+  & span {
+    @apply text-blue-400;
+  }
+}
+
+.product-quantity {
+  & span {
+    @apply text-blue-400;
+  }
+}
+
+.product-price {
+  @apply font-semibold;
+  & span {
+    @apply text-blue-400;
+  }
+}
+
+.product-link {
+  @apply hover:underline;
+}
+
+.remove-btn {
+  @apply self-end w-fit bg-red-500 rounded;
+}
+
+.totals {
+  @apply border border-gray-700 h-[330px] text-white p-6 rounded-lg shadow-lg order-1;
+}
+
+.totals-heading {
+  @apply text-lg font-semibold mb-4;
+}
+
+.delivery {
+  @apply flex justify-between text-gray-400 mb-2;
+}
+
+.subtotal {
+  @apply flex justify-between text-gray-400 mb-4;
+}
+
+.tax {
+  @apply flex justify-between text-gray-400 mb-4;
+}
+
+.total {
+  @apply flex justify-between text-xl font-bold;
+}
+
+.total-value {
+  @apply text-emerald-400 mb-10;
+}
+
+.button-container {
+  @apply flex lg:justify-end;
+}
+
+.pay-btn {
+  @apply flex justify-center items-center gap-2 w-full lg:w-[125px] bg-blue-600 hover:bg-slate-800 disabled:bg-slate-500 disabled:text-gray-400 disabled:cursor-progress text-gray-50 hover:text-gray-400 py-3 rounded-lg transition-colors duration-300 ease-in-out;
+}
+
+.back-btn {
+  @apply w-fit flex justify-center items-center gap-0 py-3 px-5 rounded-lg text-lg bg-slate-700 hover:bg-slate-800 transition-colors duration-300;
+}

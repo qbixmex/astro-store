@@ -1,0 +1,215 @@
+---
+import MainLayout from "@/layouts/MainLayout.astro";
+import { actions } from "astro:actions";
+import { formatCurrency } from "@/utils";
+import { Icon } from "astro-icon/components";
+import ProductSlideshow from "@/components/products/product-slideshow.astro";
+
+const { slug } = Astro.params;
+
+
+const { data, error } = await actions.getProductBySlug(slug as string);
+
+if (error) {
+  return Astro.redirect("/404");
+}
+
+const { product, images } = data;
+---
+
+<MainLayout
+  title={`${product.title} - Astro Shop`}
+  description={product.description}
+  robots="index, follow"
+  >
+  <!-- image={image} -->
+  <div class="content">
+    <section class="wrapper">
+      
+      <ProductSlideshow images={images} />
+
+      <section class="details">
+        <h1>{product.title}</h1>
+
+        <p class="price">{formatCurrency(product.price)}</p>
+
+        <h3>Sizes</h3>
+
+        <ul class="sizes">
+          {
+            product.sizes
+              .split(",")
+              .map((size) => (
+              <li data-size={size} class="size">
+                {size}
+              </li>
+            ))
+          }
+        </ul>
+
+        <h3>Quantity</h3>
+
+        <section class="quantityButtons">
+          <button id="decrement-quantity" class="quantityBtn">
+            <Icon name="minus" size={22} />
+          </button>
+          <input type="number" id="quantityInput" class="quantityInput" min="1" value="1" />
+          <button id="increment-quantity" class="quantityBtn">
+            <Icon name="plus" size={22} />
+          </button>
+        </section>
+
+        <button id="add-to-cart" class="cartBtn">
+          <span>Add to cart</span>
+          <Icon name="cart" class="cartIcon" />
+        </button>
+
+        <h3>Description</h3>
+
+        <div class="description">{product.description}</div>
+      </section>
+    </section>
+
+    <input type="hidden" id="product-id" value={product.id} />
+  </div>
+</MainLayout>
+
+<script>
+import { itemsInCart } from "@/store";
+import type { CartItem, Size, UUID } from "@/interfaces";
+import { CartCookiesClient } from "@/utils";
+import { navigate } from "astro:transitions/client";
+
+document.addEventListener("astro:page-load", () => {
+  const sizeElements = document.querySelectorAll(".size");
+  const quantityInput = document.getElementById("quantityInput") as HTMLInputElement;
+  const productId = document.getElementById("product-id") as HTMLInputElement;
+  const decrementQuantity = document.getElementById("decrement-quantity") as HTMLButtonElement;
+  const incrementQuantity = document.getElementById("increment-quantity") as HTMLButtonElement;
+  const addToCart = document.getElementById("add-to-cart") as HTMLButtonElement;
+
+  sizeElements.forEach((size) => {
+    size.addEventListener("click", () => {
+      sizeElements.forEach((element) => element.classList.remove("selected-size"));
+      size.classList.add("selected-size");
+    });
+  });
+  
+  let quantity = 1;
+  const MINIMUM_QUANTITY = 1;
+  const MAXIMUM_QUANTITY = 5;
+  
+  decrementQuantity.addEventListener("click", () => {
+    quantity = Math.max(quantity - 1, MINIMUM_QUANTITY);
+    quantityInput.value = quantity.toString();
+  });
+  
+  incrementQuantity.addEventListener("click", () => {
+    quantity = Math.min(quantity + 1, MAXIMUM_QUANTITY);
+    quantityInput.value = quantity.toString();
+  });
+  
+  addToCart.addEventListener("click", async () => {
+    const selectedSize = document.querySelector(".selected-size") as HTMLLIElement | null;
+    const size = selectedSize?.dataset.size;
+  
+    if (!size) {
+      alert("Please select a size !");
+      return;
+    }
+  
+    addToCart.disabled = true;
+  
+    const cartItem: CartItem = {
+      productId: productId.value as UUID,
+      size: size as Size,
+      quantity: Number(quantityInput.value),
+    };
+  
+    const cart = CartCookiesClient.addItem(cartItem);
+  
+    itemsInCart.set(cart.length);
+
+    addToCart.disabled = false;
+  
+    await navigate("/cart");
+  });
+});
+
+</script>
+
+<style>
+  .wrapper {
+    @apply grid grid-cols-1 lg:grid-cols-2 gap-10 w-full mb-10;
+  }
+
+  h1, h2, h3 {
+    @apply text-violet-400 mb-5;
+  }
+
+  h2 {
+    @apply text-2xl;
+  }
+
+  h3 {
+    @apply text-2xl mb-5;
+  }
+
+  .price {
+    @apply text-3xl font-semibold text-emerald-400 mb-5;
+  }
+
+  .sizes {
+    @apply flex gap-3 mb-5;
+  } 
+
+  .size {
+    @apply border border-slate-400 px-3 py-2 rounded hover:bg-gray-100 hover:text-gray-900 cursor-pointer transition-colors duration-300 ease-in-out;
+  }
+
+  .unselected-size {
+    @apply bg-slate-700;
+  }
+
+  .selected-size {
+    @apply bg-gray-100 text-gray-800 font-bold transition-all;
+  }
+
+  .quantityButtons {
+    @apply flex gap-3 mb-5;
+  }
+
+  .quantityBtn {
+    @apply flex justify-center items-center w-10 text-center p-2 rounded border border-gray-300 hover:bg-gray-100 hover:text-slate-900 cursor-pointer transition-colors duration-300 ease-in-out;
+  }
+
+  .quantityInput {
+    @apply w-16 text-center p-2 border border-slate-400 bg-transparent rounded focus-visible:border-purple-500 focus-visible:border-2 focus-visible:outline-none;
+  }
+
+  .cartBtn {
+    @apply w-full lg:w-fit lg:ml-auto flex justify-center items-center gap-2 rounded bg-purple-500 hover:bg-purple-800 disabled:bg-gray-500 disabled:cursor-progress text-neutral-50 p-3 mb-5 transition-colors duration-300 ease-in-out;
+  }
+
+  .cartBtn span {
+    @apply font-bold text-lg;
+  }
+
+  .cartIcon {
+    @apply size-6;
+  }
+
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  input[type="number"] {
+    -moz-appearance: textfield; /* Para Firefox */
+  }
+
+  .description {
+    @apply text-slate-400 text-2xl text-pretty leading-8;
+  }
+</style>

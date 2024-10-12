@@ -1,0 +1,165 @@
+---
+import AuthLayout from "@/layouts/AuthLayout.astro";
+import "@/styles/login-register.css";
+
+const email = Astro.cookies.get("email")?.value ?? "";
+const rememeberMe = !!email;
+---
+
+<AuthLayout
+  title="Login"
+  description="Login to your account"
+  robots="noindex, nofollow"
+>
+  <section id="formWrapper">
+    <div class="formCard">
+      <div class="formCardHeader">
+        <h3>Register</h3>
+        <p>Enter your credentials for your new account.</p>
+      </div>
+      <form id="form">
+        <div class="space-y-5">
+          <section class="fieldContainer">
+            <label class="formLabel">Name</label>
+            <input
+              class="formInput"
+              name="name"
+              type="text"
+              placeholder="John Doe"
+            />
+            <p id="name-error" class="errorMessage hidden"></p>
+          </section>
+          <section class="fieldContainer">
+            <label class="formLabel">Email</label>
+            <input
+              class="formInput"
+              name="email"
+              type="email"
+              placeholder="mail@gmail.com"
+              value={email}
+            />
+            <p id="email-error" class="errorMessage hidden"></p>
+          </section>
+          <section class="fieldContainer">
+            <label class="formLabel">Password</label>
+            <input
+              class="formInput"
+              name="password"
+              type="password"
+              placeholder="Enter your password"
+            />
+            <p id="password-error" class="errorMessage hidden"></p>
+          </section>
+          <section class="fieldContainer">
+            <label class="formLabel">Password Confirmation</label>
+            <input
+              class="formInput"
+              name="password_confirmation"
+              type="password"
+              placeholder="Repeat password"
+            />
+            <p id="password-confirmation-error" class="errorMessage hidden"></p>
+          </section>
+          <section class="flex flex-col justify-center gap-3">
+            <div class="flex items-center gap-1">
+              <input
+                id="remember_me"
+                name="remember_me"
+                type="checkbox"
+                class="formCheckboxInput"
+                checked={rememeberMe}
+              />
+              <label for="remember_me" class="formCheckboxLabel">Remember me</label>
+            </div>
+            <div class="text-sm">
+              <a href="/login" class="formLink">
+                Already have an account ?
+              </a>
+            </div>
+          </section>
+          <section>
+            <button
+              id="submit"
+              type="submit"
+              class="formSubmitBtn"
+            >register</button>
+          </section>
+        </div>
+      </form>
+    </div>
+  </section>
+</AuthLayout>
+
+<script>
+  import { actions, isInputError } from "astro:actions";
+  import Swal from "sweetalert2";
+
+  const form = document.getElementById("form") as HTMLFormElement;
+  const submitBtn = document.getElementById("submit") as HTMLButtonElement;
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    submitBtn.setAttribute("disabled", "true");
+
+    const formData = new FormData(form);
+
+    const { error } = await actions.registerUser(formData);
+    const nameError = document.getElementById("name-error") as HTMLParagraphElement;
+    const emailError = document.getElementById("email-error") as HTMLParagraphElement;
+    const passwordError = document.getElementById("password-error") as HTMLParagraphElement;
+    const passwordConfirmationError = document.getElementById("password-confirmation-error") as HTMLParagraphElement;
+
+    if (isInputError(error)) {
+      if (error.fields.name) {
+        nameError.classList.remove("hidden");
+        nameError.innerText = error.fields.name.join(', ');
+      } else {
+        nameError.classList.add("hidden");
+        nameError.innerText = "";
+      }
+
+      if (error.fields.email) {
+        emailError.classList.remove("hidden");
+        emailError.innerText = error.fields.email.join(', ');
+      } else {
+        emailError.classList.add("hidden");
+        emailError.innerText = "";
+      }
+
+      if (error.fields.password) {
+        passwordError.classList.remove("hidden");
+        passwordError.innerText = error.fields.password.join(', ');
+      } else {
+        passwordError.classList.add("hidden");
+        passwordError.innerText = "";
+      }
+
+      if (error.fields.password_confirmation) {
+        passwordConfirmationError.classList.remove("hidden");
+        passwordConfirmationError.innerText = error.fields.password_confirmation.join(', ');
+      } else {
+        passwordConfirmationError.classList.add("hidden");
+        passwordConfirmationError.innerText = "";
+      }
+
+      submitBtn.removeAttribute("disabled");
+      return;
+    }
+
+    if (error) {
+      Swal.fire({
+        title: "Error",
+        text: error.message,
+        icon: "error",
+        confirmButtonText: "Close",
+      });
+      submitBtn.removeAttribute("disabled");
+      return;
+    }
+
+    form.reset();
+    submitBtn.removeAttribute("disabled")
+
+    window.location.replace("/protected");
+  });
+</script>

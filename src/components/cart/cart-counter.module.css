@@ -1,0 +1,15 @@
+.cartLink {
+  @apply relative inline-block mx-5;
+}
+
+.emptyCart {
+  @apply inline-block mx-5;
+}
+
+.cartCounter {
+  @apply absolute -top-3 -right-3 flex justify-center items-center bg-blue-500 text-white rounded-full w-6 h-6;
+}
+
+.disabledIcon {
+  @apply text-gray-500 cursor-not-allowed;
+}

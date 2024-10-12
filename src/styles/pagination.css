@@ -1,0 +1,15 @@
+.wrapper {
+  @apply flex items-center justify-between mt-20 mb-10;
+}
+
+.current-page {
+  @apply text-lg italic text-slate-400;
+}
+
+.paginationBtn {
+  @apply w-[150px] flex justify-center items-center gap-0 py-3 rounded-lg text-lg bg-slate-700 hover:bg-slate-800 transition-colors duration-300;
+}
+
+.paginationIcon {
+  @apply size-[28px];
+}
