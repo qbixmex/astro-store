@@ -1,7 +1,13 @@
 ---
+import { actions } from "astro:actions";
 import MainLayout from "@/layouts/MainLayout.astro";
 
-const cart = Astro.cookies.get("cart") ?? [];
+const cartCookie = Astro.cookies.has("cart") ? Astro.cookies.get("cart")!.value : '[]';
+const { data, error } = await actions.loadProductsFromCart(cartCookie);
+
+if (error) {
+  return Astro.redirect("/404");
+}
 ---
 
 <MainLayout
@@ -14,6 +20,7 @@ const cart = Astro.cookies.get("cart") ?? [];
 
 <pre>
 <code>
+{JSON.stringify(data, null, 2)}
 </code>
 </pre>
   </div>
