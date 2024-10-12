@@ -75,6 +75,7 @@ const { product, images } = data;
 </MainLayout>
 
 <script>
+import { itemsInCart } from "@/store";
 import type { CartItem, Size, UUID } from "@/interfaces";
 import { CartCookiesClient } from "@/utils";
 
@@ -123,12 +124,16 @@ addToCart.addEventListener("click", () => {
     quantity: Number(quantityInput.value),
   };
 
-  CartCookiesClient.addItem(cartItem);
+  const cart = CartCookiesClient.addItem(cartItem);
 
   addToCart.disabled = false;
 
+  itemsInCart.set(cart.length);
+
+  console.log("ITEMS IN CART:", itemsInCart.get());
+
   // TODO: View Transition
-  window.location.href = "/cart";
+  // window.location.href = "/cart";
 });
 
 </script>
