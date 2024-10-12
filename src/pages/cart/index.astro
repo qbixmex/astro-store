@@ -1,0 +1,20 @@
+---
+import MainLayout from "@/layouts/MainLayout.astro";
+
+const cart = Astro.cookies.get("cart") ?? [];
+---
+
+<MainLayout
+  title="Cart - Astro Shop"
+  description="Astro Shop cart page"
+  robots="noindex, nofollow"
+>
+  <div class="content">
+    <h1>Cart</h1>
+
+<pre>
+<code>
+</code>
+</pre>
+  </div>
+</MainLayout>

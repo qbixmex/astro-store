@@ -75,6 +75,8 @@ const { product, images } = data;
 </MainLayout>
 
 <script>
+import type { CartItem, Size, UUID } from "@/interfaces";
+import { CartCookiesClient } from "@/utils";
 
 const sizeElements = document.querySelectorAll(".size");
 const quantityInput = document.getElementById("quantityInput") as HTMLInputElement;
@@ -115,14 +117,20 @@ addToCart.addEventListener("click", () => {
 
   addToCart.disabled = true;
 
-  const product = {
-    id: productId.value,
-    size,
-    quantity: quantityInput.value,
+  const cartItem: CartItem = {
+    productId: productId.value as UUID,
+    size: size as Size,
+    quantity: Number(quantityInput.value),
   };
 
-  console.log(product);
+  CartCookiesClient.addItem(cartItem);
+
+  addToCart.disabled = false;
+
+  // TODO: View Transition
+  window.location.href = "/cart";
 });
+
 </script>
 
 <style>
