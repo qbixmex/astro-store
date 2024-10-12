@@ -1,13 +1,20 @@
 ---
 import { actions } from "astro:actions";
 import MainLayout from "@/layouts/MainLayout.astro";
+import { Icon } from "astro-icon/components";
+import { formatCurrency } from "@/utils";
+import "@/styles/cart.css";
 
 const cartCookie = Astro.cookies.has("cart") ? Astro.cookies.get("cart")!.value : '[]';
-const { data, error } = await actions.loadProductsFromCart(cartCookie);
+const { data: products, error } = await actions.loadProductsFromCart(cartCookie);
 
 if (error) {
-  return Astro.redirect("/404");
+  return Astro.redirect("/");
 }
+
+const totalAmount = products.reduce((accumulator, product) => {
+  return accumulator + (product.price * product.quantity);
+}, 0);
 ---
 
 <MainLayout
@@ -18,10 +25,76 @@ if (error) {
   <div class="content">
     <h1>Cart</h1>
 
-<pre>
-<code>
-{JSON.stringify(data, null, 2)}
-</code>
-</pre>
+    <section class="cart-layout">
+      <section class="cart-items">
+        <h2 class="sub-heading">Products</h2>
+
+        <div class="products">
+        {products.map((product) => (
+          <div class="product">
+            <div class="product-image">
+              <a class="product-link" href={`/products/${product.slug}`}>
+                <img src={product.image} alt={product.title} />
+              </a>
+            </div>
+
+            <div class="product-details">
+              <h3 class="product-title">
+                <a class="product-link" href={`/products/${product.slug}`}>
+                  {product.title}
+                </a>
+              </h3>
+              <p class="product-size">Size: <span>{product.size}</span></p>
+              <p class="product-quantity">Quantity: <span>{product.quantity}</span></p>
+              <p class="product-price">
+                Unit Price: <span>{formatCurrency(product.price)}</span>
+              </p>
+              <button id="remove-btn" class="remove-btn" title="Remove product from cart">
+                <Icon name="times" size={28} />
+              </button>
+            </div>
+          </div>
+        ))}
+        </div>
+
+        <a href="javascript:history.back()" class="back-btn">
+          <Icon name="left-chevron" size={32} />
+          <span>Back</span>
+        </a>
+      </section>
+
+      <!-- Totals -->
+
+      <section class="totals">
+        <h2 class="totals-heading">Purchase Overview</h2>
+  
+        <div class="delivery">
+          <span class="delivery-label">Delivery</span>
+          <span class="delivery-value">Free</span>
+        </div>
+  
+        <div class="subtotal">
+          <span class="subtotal-label">SubTotal </span>
+          <span class="subtotal-value">{formatCurrency(totalAmount)}</span>
+        </div>
+
+        <div class="tax">
+          <span class="tax-label">Tax</span>
+          <span class="tax-value">{formatCurrency(totalAmount * 0.15)} (15%)</span>
+        </div>
+  
+        <div class="total">
+          <span class="total-label">Total</span>
+          <span class="total-value">{formatCurrency(totalAmount * 1.15)}</span>
+        </div>
+  
+        <div class="button-container">
+          <button class="pay-btn">
+            <span>PAY</span>
+            <Icon name="credit-card" size={24} />
+          </button>
+        </div>
+      </section>
+    </section>
   </div>
 </MainLayout>
