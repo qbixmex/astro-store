@@ -1,4 +1,4 @@
-import type { CartItem } from "@/interfaces";
+import type { CartItem, UUID } from "@/interfaces";
 import Cookies from "js-cookie";
 
 class CartCookiesClient {
@@ -24,11 +24,11 @@ class CartCookiesClient {
     return cart;
   }
 
-  static removeItem(cartItem: CartItem): CartItem[] {
+  static removeItem(productId: UUID, size: string): CartItem[] {
     const cart = CartCookiesClient.getCart();
 
     const updatedCart = cart.filter((item) => {
-      return !((item.productId === cartItem.productId) && (item.size === cartItem.size));
+      return !((item.productId === productId) && (item.size === size));
     });
 
     Cookies.set("cart", JSON.stringify(updatedCart));

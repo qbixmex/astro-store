@@ -43,6 +43,12 @@
   }
 }
 
+.product-size {
+  & span {
+    @apply text-blue-400;
+  }
+}
+
 .product-quantity {
   & span {
     @apply text-blue-400;
