@@ -1,7 +1,7 @@
 import type { ProductWithImages } from "@/interfaces";
 import { defineAction } from "astro:actions";
 import { z } from "astro:content";
-import { db, count, Product, ProductImage, eq, sql } from "astro:db";
+import { db, count, Product, ProductImage, sql } from "astro:db";
 
 const DEFAULT_PAGE = 1;
 const DEFAULT_LIMIT = 12;

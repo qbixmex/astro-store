@@ -89,7 +89,7 @@ document.addEventListener("astro:page-load", () => {
   const addToCart = document.getElementById("add-to-cart") as HTMLButtonElement;
 
   sizeElements.forEach((size) => {
-    size.addEventListener("click", (event) => {
+    size.addEventListener("click", () => {
       sizeElements.forEach((element) => element.classList.remove("selected-size"));
       size.classList.add("selected-size");
     });
