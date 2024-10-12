@@ -20,7 +20,7 @@ const { isLoggedIn, isAdmin } = Astro.locals;
       />
     </section>
 
-    <CartCounter client:load />
+    <CartCounter client:load transition:persist />
 
     <ul id="menu">
       <!-- HOME -->

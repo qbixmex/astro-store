@@ -78,62 +78,62 @@ const { product, images } = data;
 import { itemsInCart } from "@/store";
 import type { CartItem, Size, UUID } from "@/interfaces";
 import { CartCookiesClient } from "@/utils";
+import { navigate } from "astro:transitions/client";
 
-const sizeElements = document.querySelectorAll(".size");
-const quantityInput = document.getElementById("quantityInput") as HTMLInputElement;
-const productId = document.getElementById("product-id") as HTMLInputElement;
-const decrementQuantity = document.getElementById("decrement-quantity") as HTMLButtonElement;
-const incrementQuantity = document.getElementById("increment-quantity") as HTMLButtonElement;
-const addToCart = document.getElementById("add-to-cart") as HTMLButtonElement;
+document.addEventListener("astro:page-load", () => {
+  const sizeElements = document.querySelectorAll(".size");
+  const quantityInput = document.getElementById("quantityInput") as HTMLInputElement;
+  const productId = document.getElementById("product-id") as HTMLInputElement;
+  const decrementQuantity = document.getElementById("decrement-quantity") as HTMLButtonElement;
+  const incrementQuantity = document.getElementById("increment-quantity") as HTMLButtonElement;
+  const addToCart = document.getElementById("add-to-cart") as HTMLButtonElement;
 
-sizeElements.forEach((size) => {
-  size.addEventListener("click", (event) => {
-    sizeElements.forEach((element) => element.classList.remove("selected-size"));
-    size.classList.add("selected-size");
+  sizeElements.forEach((size) => {
+    size.addEventListener("click", (event) => {
+      sizeElements.forEach((element) => element.classList.remove("selected-size"));
+      size.classList.add("selected-size");
+    });
   });
-});
+  
+  let quantity = 1;
+  const MINIMUM_QUANTITY = 1;
+  const MAXIMUM_QUANTITY = 5;
+  
+  decrementQuantity.addEventListener("click", () => {
+    quantity = Math.max(quantity - 1, MINIMUM_QUANTITY);
+    quantityInput.value = quantity.toString();
+  });
+  
+  incrementQuantity.addEventListener("click", () => {
+    quantity = Math.min(quantity + 1, MAXIMUM_QUANTITY);
+    quantityInput.value = quantity.toString();
+  });
+  
+  addToCart.addEventListener("click", async () => {
+    const selectedSize = document.querySelector(".selected-size") as HTMLLIElement | null;
+    const size = selectedSize?.dataset.size;
+  
+    if (!size) {
+      alert("Please select a size !");
+      return;
+    }
+  
+    addToCart.disabled = true;
+  
+    const cartItem: CartItem = {
+      productId: productId.value as UUID,
+      size: size as Size,
+      quantity: Number(quantityInput.value),
+    };
+  
+    const cart = CartCookiesClient.addItem(cartItem);
+  
+    itemsInCart.set(cart.length);
 
-let quantity = 1;
-const MINIMUM_QUANTITY = 1;
-const MAXIMUM_QUANTITY = 5;
-
-decrementQuantity.addEventListener("click", () => {
-  quantity = Math.max(quantity - 1, MINIMUM_QUANTITY);
-  quantityInput.value = quantity.toString();
-});
-
-incrementQuantity.addEventListener("click", () => {
-  quantity = Math.min(quantity + 1, MAXIMUM_QUANTITY);
-  quantityInput.value = quantity.toString();
-});
-
-addToCart.addEventListener("click", () => {
-  const selectedSize = document.querySelector(".selected-size") as HTMLLIElement | null;
-  const size = selectedSize?.dataset.size;
-
-  if (!size) {
-    alert("Please select a size !");
-    return;
-  }
-
-  addToCart.disabled = true;
-
-  const cartItem: CartItem = {
-    productId: productId.value as UUID,
-    size: size as Size,
-    quantity: Number(quantityInput.value),
-  };
-
-  const cart = CartCookiesClient.addItem(cartItem);
-
-  addToCart.disabled = false;
-
-  itemsInCart.set(cart.length);
-
-  console.log("ITEMS IN CART:", itemsInCart.get());
-
-  // TODO: View Transition
-  // window.location.href = "/cart";
+    addToCart.disabled = false;
+  
+    await navigate("/cart");
+  });
 });
 
 </script>

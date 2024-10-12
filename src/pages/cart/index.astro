@@ -109,18 +109,22 @@ const totalAmount = products.reduce((accumulator, product) => {
 </MainLayout>
 
 <script>
+  import { navigate } from "astro:transitions/client";
   import { CartCookiesClient } from "@/utils";
   import type { UUID } from "@/interfaces";
-  const removeButons: NodeListOf<HTMLButtonElement> = document.querySelectorAll(".remove-btn");
+  import { itemsInCart } from '@/store';
+  
+  document.addEventListener("astro:page-load", () => {
+    const removeButons: NodeListOf<HTMLButtonElement> = document.querySelectorAll(".remove-btn");
 
-  removeButons.forEach((button) => {
-    button.addEventListener("click", () => {
-      const productId = button.dataset.id;
-      const productSize = button.dataset.size;
-      CartCookiesClient.removeItem(productId as UUID, productSize as string);
-      // TODO: Temporary
-      window.location.reload();
+    removeButons.forEach((button) => {
+      button.addEventListener("click", () => {
+        const productId = button.dataset.id;
+        const productSize = button.dataset.size;
+        const cart = CartCookiesClient.removeItem(productId as UUID, productSize as string);
+        itemsInCart.set(cart.length);
+        navigate("/cart");
+      });
     });
-  });
-
+  })
 </script>

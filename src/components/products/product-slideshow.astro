@@ -49,18 +49,21 @@ const fullImages = images.map((image) => {
 <script>
 import Swiper from "swiper";
 import { Pagination, Autoplay } from "swiper/modules";
+import { navigate } from "astro:transitions/client";
 
-new Swiper('.swiper', {
-  // If we need pagination
-  pagination: {
-    el: '.swiper-pagination',
-  },
-
-  autoplay: {
-    delay: 5000,
-    pauseOnMouseEnter: true,
-  },
-
-  modules: [Pagination, Autoplay],
+document.addEventListener("astro:page-load", () => {
+  new Swiper('.swiper', {
+    // If we need pagination
+    pagination: {
+      el: '.swiper-pagination',
+    },
+  
+    autoplay: {
+      delay: 5000,
+      pauseOnMouseEnter: true,
+    },
+  
+    modules: [Pagination, Autoplay],
+  });
 });
 </script>
