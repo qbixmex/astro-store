@@ -75,6 +75,7 @@ const { product, images } = data;
 </MainLayout>
 
 <script>
+
 const sizeElements = document.querySelectorAll(".size");
 const quantityInput = document.getElementById("quantityInput") as HTMLInputElement;
 const productId = document.getElementById("product-id") as HTMLInputElement;
@@ -174,7 +175,7 @@ addToCart.addEventListener("click", () => {
   }
 
   .cartBtn {
-    @apply w-full lg:w-fit lg:ml-auto flex justify-center items-center gap-2 rounded bg-purple-500 hover:bg-purple-800 text-neutral-50 p-3 mb-5 transition-colors duration-300 ease-in-out;
+    @apply w-full lg:w-fit lg:ml-auto flex justify-center items-center gap-2 rounded bg-purple-500 hover:bg-purple-800 disabled:bg-gray-500 disabled:cursor-progress text-neutral-50 p-3 mb-5 transition-colors duration-300 ease-in-out;
   }
 
   .cartBtn span {
