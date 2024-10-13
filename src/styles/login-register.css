@@ -20,7 +20,7 @@
   @apply text-sm font-medium text-gray-700 tracking-wide;
 }
 .formInput {
-  @apply w-full text-base px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-green-400;
+  @apply w-full text-base px-4 py-2 border text-slate-800 border-gray-800 rounded-lg focus:outline-none focus:border-blue-500;
 }
 .formCheckboxLabel {
   @apply ml-2 block text-sm text-gray-800;

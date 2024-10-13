@@ -33,7 +33,7 @@ const seed = async () => {
 	seedProducts.forEach((item) => {
 	
 		const product = {
-			id: crypto.randomUUID(),
+			id: item.id,
 			description: item.description,
 			stock: item.stock,
 			price: item.price,

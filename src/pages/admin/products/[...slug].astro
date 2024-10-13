@@ -1,0 +1,25 @@
+---
+import MainLayout from '@/layouts/MainLayout.astro';
+
+const { slug } = Astro.params;
+---
+
+<MainLayout
+  title="Dashboard - Astro Shop"
+  description="Dashboard page for Astro Shop"
+  robots="noindex, nofollow"
+>
+  <div class="content">
+    <h1>Admin</h1>
+
+    <div class="divisor"></div>
+
+    <h2>{slug}</h2>
+  </div>
+</MainLayout>
+
+<style>
+  h2 {
+    @apply text-4xl text-purple-500 my-10;
+  }
+</style>

@@ -27,7 +27,7 @@ const getProductsByPage = defineAction({
     }
 
     const rawQuery = sql`
-      SELECT product.id, product.title, product.slug, product.price, (
+      SELECT product.id, product.title, product.slug, product.price, product.stock, (
         SELECT GROUP_CONCAT(image, ',')
         FROM (
           SELECT *

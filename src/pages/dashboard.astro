@@ -1,8 +1,26 @@
 ---
 import MainLayout from '@/layouts/MainLayout.astro';
-// import { getSession } from 'auth-astro/server';
-// const session = await getSession(Astro.request);
-// const { user } = session ?? {};
+import Pagination from '@/components/shared/Pagination.astro';
+import { actions } from 'astro:actions';
+import { formatCurrency } from '@/utils';
+import "@/styles/dashboard.css";
+import ProductImage from '@/components/products/ProductImage.astro';
+
+const searchParams = Astro.url.searchParams;
+const pageParams = Number(searchParams.get("page") ?? 1);
+
+const { data, error} = await actions.getProductsByPage({ page: pageParams });
+
+if (error) {
+  return Astro.redirect("/");
+}
+
+const { products, totalPages } = data;
+
+//* If someone put a page number that doesn't exist, redirect to the last page.
+if (products.length === 0) {
+  return Astro.redirect(`/dashboard?page=${totalPages}`);
+}
 ---
 
 <MainLayout
@@ -10,9 +28,54 @@ import MainLayout from '@/layouts/MainLayout.astro';
   description="Dashboard page for Astro Shop"
   robots="noindex, nofollow"
 >
-  <div class="container mx-auto px-5">
-    <h1 class="text-3xl text-purple-400">Dashboard Page</h1>
+  <div class="content">
+    <h1>Dashboard</h1>
 
-    <p class="text-slate-500">Content goes here ...</p>
+    <div class="divisor"></div>
+
+    <h2>Products</h2>
+
+    <table id="product-list">
+      <thead>
+        <tr>
+          <th id="image-row">Image</th>
+          <th>Title</th>
+          <th>Price</th>
+          <th>Stock</th>
+        </tr>
+      </thead>
+      <tbody>
+        {products.map((product) => (
+          <tr>
+            <td>
+              <a
+                href={`/admin/products/${product.slug}`}
+                data-astro-prefetch="load"
+              >
+                {/* TODO: This will through an error if the images field is empty */}
+                <ProductImage
+                  src={`/assets/products/${product.images.split(',').at(0)}`}
+                  alt={product.title}
+                  class="product-image"
+                />
+              </a>
+            </td>
+            <td>
+              <a
+                class="product-link"
+                href={`/admin/products/${product.slug}`}
+                data-astro-prefetch="load"
+              >
+                {product.title}
+              </a>
+            </td>
+            <td><span class="product-price">{formatCurrency(product.price)}</span></td>
+            <td><span class="product-stock">{product.stock}</span></td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+
+    <Pagination totalPages={totalPages} />
   </div>
 </MainLayout>
