@@ -37,32 +37,43 @@ const createUpdateProduct = defineAction({
     //* Slugify the slug
     formWithoutId.slug = formWithoutId.slug.trim().replaceAll(" ", "-").toLowerCase();
 
-    const product = {
-      id,
-      user: user.id!,
-      ...formWithoutId,
-    };
+    if (!form.id) {
+      //* Create Product
+      const result = await db.insert(Product).values({
+        id,
+        user: user.id!,
+        ...formWithoutId,
+      });
 
-    // TODO: Create Product
-
-    //* Update Product
-    const result = await db
-      .update(Product)
-      .set(product)
-      .where(
-        eq(Product.id, id)
-      );
-
-    if (result.rowsAffected === 0) {
-      throw new Error("Failed to Save Product");
-    };
+      if (result.rowsAffected === 0) {
+        throw new Error("Failed to create product");
+      };
+    } else {
+      //* Update Product
+      const result = await db
+        .update(Product)
+        .set({
+          user: user.id!,
+          ...formWithoutId,
+        })
+        .where(
+          eq(Product.id, id)
+        );
+      if (result.rowsAffected === 0) {
+        throw new Error("Failed to update product");
+      };
+    }
 
     // TODO: Insert Images
 
     return {
       ok: true,
       message: "Product Saved Successfully",
-      product,
+      product: {
+        id,
+        user: user.id!,
+        ...formWithoutId,
+      },
     };
   },
 });

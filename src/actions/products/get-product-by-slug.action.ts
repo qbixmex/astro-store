@@ -1,11 +1,35 @@
 import { defineAction } from "astro:actions";
 import { z } from "astro:content";
 import { db, eq, Product, ProductImage } from "astro:db";
+import type { ProductWithImages } from "@/interfaces";
+
+const newProduct: ProductWithImages = {
+  id: "",
+  title: "",
+  slug: "",
+  description: "",
+  price: 0,
+  gender: "",
+  type: "",
+  stock: 0,
+  sizes: "",
+  tags: "",
+  images: "",
+};
 
 const getProductBySlug = defineAction({
   accept: "json",
   input: z.string(),
+
   handler: async (slug) => {
+
+    if (slug === "new") {
+      return {
+        product: newProduct,
+        images: [],
+      };
+    }
+
     const product = await db
       .select()
       .from(Product)

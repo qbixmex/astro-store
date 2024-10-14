@@ -14,8 +14,6 @@ if (error) {
   return Astro.redirect('/admin/products');
 }
 
-console.log(data);
-
 const { product, images } = data;
 ---
 
@@ -79,6 +77,7 @@ const { product, images } = data;
               name="price"
               value={product.price}
               class="form-control"
+              step="0.01"
             />
           </div>
 
@@ -114,7 +113,7 @@ const { product, images } = data;
           <div class="mb-4">
             <label for="gender" class="form-label">Sex</label>
             <select class="form-control" name="gender">
-              <option value="">[ Select ]</option>
+              <option disabled selected>Select gender</option>
               {
                 ['men', 'women', 'unisex', 'kid'].map((gender) => (
                   <option
@@ -133,7 +132,7 @@ const { product, images } = data;
           <div class="mb-4">
             <label for="tags" class="form-label">Type</label>
             <select class="form-control" name="type">
-              <option value="">[ Seleccione ]</option>
+              <option disabled selected>Select a type</option>
               {
                 ['shirts', 'shirt', 'pants', 'hats', 'hoodies'].map((type) => (
                   <option
