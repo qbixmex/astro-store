@@ -18,8 +18,8 @@ const {
 } = Astro.props;
 
 const currentImage = src.startsWith("http")
-  ? `${import.meta.env.PUBLIC_URL}/assets/products/${src}`
-  : src;
+  ? src
+  : `${import.meta.env.PUBLIC_URL}/assets/products/${src}`;
 ---
 
 <img

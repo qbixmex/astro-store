@@ -1,25 +1,254 @@
 ---
+import ProductSlideshow from '@/components/products/product-slideshow.astro';
+import ProductImage from '@/components/products/ProductImage.astro';
 import MainLayout from '@/layouts/MainLayout.astro';
+import { Icon } from 'astro-icon/components';
+import { actions } from 'astro:actions';
+import '@/styles/admin.product-edit.css';
 
 const { slug } = Astro.params;
+
+const { data, error } = await actions.getProductBySlug(slug ?? '');
+
+if (error) {
+  return Astro.redirect('/admin/products');
+}
+
+const { product, images } = data;
 ---
 
 <MainLayout
-  title="Dashboard - Astro Shop"
-  description="Dashboard page for Astro Shop"
+  title="Product maintenance - Astro Shop"
+  description="Product maintenance page for Astro Shop"
   robots="noindex, nofollow"
 >
   <div class="content">
-    <h1>Admin</h1>
+    <h1>Dashboard</h1>
 
     <div class="divisor"></div>
 
-    <h2>{slug}</h2>
+    <form id="form">
+      <!-- General Data -->
+      <div class="mt-2">
+        <h2>General Data</h2>
+
+        {/* TITLE */}
+        <div class="mb-4">
+          <label for="title" class="form-label">Title</label>
+          <input
+            type="text"
+            id="title"
+            name="title"
+            value={product.title}
+            class="form-control"
+          />
+        </div>
+
+        {/* SLUG */}
+        <div class="mb-4">
+          <label for="slug" class="form-label">Slug</label>
+          <input
+            type="text"
+            id="slug"
+            name="slug"
+            value={product.slug}
+            class="form-control"
+          />
+        </div>
+
+        {/* DESCRIPTION */}
+        <div class="mb-4">
+          <label for="description" class="form-label">Description</label>
+          <textarea
+            id="description"
+            name="description"
+            class="form-textarea"
+            rows="8">{product.description}</textarea
+          >
+        </div>
+
+        <div id="options">
+          {/* PRICE */}
+          <div class="mb-4">
+            <label for="price" class="form-label">Price</label>
+            <input
+              type="number"
+              id="price"
+              name="price"
+              value={product.price}
+              class="form-control"
+            />
+          </div>
+
+          {/* STOCK */}
+          <div class="mb-4">
+            <label for="stock" class="form-label">Stock</label>
+            <input
+              type="number"
+              id="stock"
+              name="stock"
+              value={product.stock}
+              class="form-control"
+            />
+          </div>
+        </div>
+
+        {/* TAGS */}
+        <div class="mb-4">
+          <label for="tags" class="form-label">
+            Tags <small class="text-gray-500">(Separate by commas)</small>
+          </label>
+          <input
+            type="text"
+            id="tags"
+            name="tags"
+            value={product.tags}
+            class="form-control"
+          />
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          {/* SEX */}
+          <div class="mb-4">
+            <label for="gender" class="form-label">Sex</label>
+            <select class="form-control" name="gender">
+              <option value="">[ Select ]</option>
+              {
+                ['men', 'women', 'unisex', 'kid'].map((gender) => (
+                  <option
+                    value={gender}
+                    class="capitalize"
+                    selected={gender === product.gender}
+                  >
+                    {gender.toUpperCase()}
+                  </option>
+                ))
+              }
+            </select>
+          </div>
+
+          {/* TYPE */}
+          <div class="mb-4">
+            <label for="tags" class="form-label">Type</label>
+            <select class="form-control" name="type">
+              <option value="">[ Seleccione ]</option>
+              {
+                ['shirts', 'shirt', 'pants', 'hats', 'hoodies'].map((type) => (
+                  <option
+                    value={type}
+                    class="capitalize"
+                    selected={type === product.type}
+                  >
+                    {type.toUpperCase()}
+                  </option>
+                ))
+              }
+            </select>
+          </div>
+        </div>
+
+        {/* SIZES */}
+        <div class="mb-4">
+          <label for="sizes" class="form-label">Sizes</label>
+          <div class="flex">
+            {
+              ['XS', 'S', 'M', 'L', 'XL', 'XXL'].map((size) => (
+                <button
+                  class:list={["btn-size", {
+                    "active": product.sizes.includes(size),
+                  }]}
+                  type="button"
+                  onclick="this.classList.toggle('active')"
+                >{size}</button>
+              ))
+            }
+          </div>
+        </div>
+      </div>
+
+      {/* IMAGES */}
+      <div>
+        <!-- File upload -->
+        <div class="mt-4">
+          <!-- File input -->
+          <div id="file-input">
+            <label
+              for="file-upload"
+              class="label-file-upload"
+              id="drop-zone"
+            >
+              <div class="message-container">
+                <Icon name="drag-drop" size={50} class="text-orange-500" />
+                <p class="drag-drop-message" id="lbl-selected-files">
+                  <span>Click here </span> or drag and drop files
+                </p>
+
+                <p class="file-format">SVG, PNG, JPG or GIF (max file size 800 x 400)</p>
+                <!-- class="hidden" -->
+                <!-- accept only images -->
+                <input
+                  id="file-upload"
+                  name="imageFiles"
+                  type="file"
+                  accept="image/*"
+                  multiple
+                />
+              </div>
+
+            </label>
+          </div>
+
+          <!-- Slideshow -->
+          <ProductSlideshow images={images} />
+
+          <section id="product-images">
+            {images.map((image) => (
+              <div class="product-image">
+                <ProductImage src={image} alt={product.title} class="image" />
+                <button class="delete-image-btn" title="Delete image">
+                  <Icon name="times" size={25} />
+                </button>
+              </div>
+            ))}
+          </section>
+        </div>
+      </div>
+
+      <section class="col-span-2 flex justify-between items-center">
+        {/* BACK */}
+        <a href="javascript:history.back()" class="back-btn">
+          <Icon name="left-chevron" size={32} />
+        </a>
+        {/* SAVE */}
+        <button class="save-btn">save</button>
+      </section>
+    </form>
   </div>
 </MainLayout>
 
-<style>
-  h2 {
-    @apply text-4xl text-purple-500 my-10;
-  }
-</style>
+<script>
+  document.addEventListener("astro:page-load", () => {
+    const form = document.getElementById("form") as HTMLFormElement;
+
+    const sizesBtns: NodeListOf<HTMLButtonElement> = form.querySelectorAll(".btn-size");
+
+    if (!form) return;
+
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+
+      const selectedSizes = Array.from(sizesBtns)
+        .filter((btn) => btn.classList.contains("active"))
+        .map((btn) => btn.textContent?.trim())
+        .join(",");
+
+      const formData = new FormData(form);
+
+      formData.set("sizes", selectedSizes);
+
+      const formValues = Object.fromEntries(formData.entries());
+
+      console.log(formValues);
+    });
+  });
+</script>

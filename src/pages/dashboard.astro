@@ -54,7 +54,7 @@ if (products.length === 0) {
               >
                 {/* TODO: This will through an error if the images field is empty */}
                 <ProductImage
-                  src={`/assets/products/${product.images.split(',').at(0)}`}
+                  src={`${product.images.split(',').at(0)}`}
                   alt={product.title}
                   class="product-image"
                 />
