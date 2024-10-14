@@ -5,15 +5,15 @@ import type { ProductWithImages } from "@/interfaces";
 
 const newProduct: ProductWithImages = {
   id: "",
-  title: "",
-  slug: "",
-  description: "",
-  price: 0,
-  gender: "",
-  type: "",
-  stock: 0,
-  sizes: "",
-  tags: "",
+  title: "Black pant for Women",
+  slug: "black-pant-for-women",
+  description: "This is a wonderful product for women with great materials ...",
+  price: 24.50,
+  gender: "women",
+  type: "pants",
+  stock: 25,
+  sizes: "S,M,L",
+  tags: "pants, new",
   images: "",
 };
 

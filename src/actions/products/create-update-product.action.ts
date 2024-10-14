@@ -4,6 +4,16 @@ import { getSession } from "auth-astro/server";
 import { z } from "astro:content";
 import { db, eq, Product } from "astro:db";
 
+const MAX_FILE_SIZE = 5_242_880; // 5 mb
+const ACCEPTED_IMAGE_FILES = [
+  "image/jpeg",
+  "image/jpg",
+  "image/gif",
+  "image/png",
+  "image/svg+xml",
+  "image/webp",
+];
+
 const createUpdateProduct = defineAction({
   accept: "form",
   input: z.object({
@@ -11,7 +21,6 @@ const createUpdateProduct = defineAction({
     title: z.string(),
     slug: z.string(),
     description: z.string(),
-    // images: z.string().optional(),
     stock: z.number(),
     price: z.number(),
     sizes: z.string(),
@@ -19,7 +28,15 @@ const createUpdateProduct = defineAction({
     type: z.string(),
     gender: z.string(),
 
-    // TODO: Add image field
+    imageFiles: z.array(
+      z.instanceof(File)
+        .refine((file) => file.size <= MAX_FILE_SIZE, {
+          message: "Maximum file size 5 mb"
+        })
+        .refine((file) => ACCEPTED_IMAGE_FILES.includes(file.type), {
+          message: "Supported image file types are: (jpeg, jpg, gif, png, svg, webp)",
+        })
+    ).optional(),
   }),
   handler: async (form, { request }) => {
     const session = await getSession(request);
@@ -31,6 +48,7 @@ const createUpdateProduct = defineAction({
 
     const {
       id = crypto.randomUUID(),
+      imageFiles,
       ...formWithoutId
     } = form;
 
@@ -64,7 +82,7 @@ const createUpdateProduct = defineAction({
       };
     }
 
-    // TODO: Insert Images
+    console.log(imageFiles);
 
     return {
       ok: true,
