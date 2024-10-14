@@ -14,6 +14,8 @@ if (error) {
   return Astro.redirect('/admin/products');
 }
 
+console.log(data);
+
 const { product, images } = data;
 ---
 
@@ -222,11 +224,16 @@ const { product, images } = data;
         {/* SAVE */}
         <button class="save-btn">save</button>
       </section>
+
+      <input type="hidden" name="id" value={product.id} />
     </form>
   </div>
 </MainLayout>
 
 <script>
+  import { actions } from "astro:actions";
+  import { navigate } from "astro:transitions/client";
+
   document.addEventListener("astro:page-load", () => {
     const form = document.getElementById("form") as HTMLFormElement;
 
@@ -234,7 +241,7 @@ const { product, images } = data;
 
     if (!form) return;
 
-    form.addEventListener("submit", (event) => {
+    form.addEventListener("submit", async (event) => {
       event.preventDefault();
 
       const selectedSizes = Array.from(sizesBtns)
@@ -246,9 +253,18 @@ const { product, images } = data;
 
       formData.set("sizes", selectedSizes);
 
-      const formValues = Object.fromEntries(formData.entries());
+      // const formValues = Object.fromEntries(formData.entries());
 
-      console.log(formValues);
+      const { data, error } = await actions.createUpdateProduct(formData);
+
+      if (error) {
+        alert(error.message);
+        return;
+      }
+
+      if (data.ok) {
+        navigate(`/admin/products/${data.product.slug}`);
+      }
     });
   });
 </script>

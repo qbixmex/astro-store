@@ -1,5 +1,5 @@
 import { loginUser, logoutSession, registerUser } from './auth';
-import { getProductsByPage, getProductBySlug } from './products';
+import { getProductsByPage, getProductBySlug, createUpdateProduct } from './products';
 import loadProductsFromCart from './products/load-products-from-cart.action';
 
 export const server = {
@@ -7,6 +7,7 @@ export const server = {
   getProductsByPage,
   getProductBySlug,
   loadProductsFromCart,
+  createUpdateProduct,
 
   //* Auth
   loginUser,
