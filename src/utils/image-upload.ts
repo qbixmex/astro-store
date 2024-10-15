@@ -28,6 +28,16 @@ class ImageUpload {
 
   }
 
+  static async delete(publicId: string): Promise<boolean> {
+    try {
+      await cloudinary.uploader.destroy(publicId);
+      return true;
+    } catch (error) {
+      console.log(error as UploadApiResponse);
+      return false;
+    }
+  }
+
   private static async transformFile(file: File) {
 
     const buffer = await file.arrayBuffer();

@@ -180,6 +180,7 @@ const { product, images } = data;
             >
               <div class="message-container">
                 <Icon name="drag-drop" size={50} class="text-orange-500" />
+
                 <p class="drag-drop-message" id="lbl-selected-files">
                   <span>Click here </span> or drag and drop files
                 </p>
@@ -200,13 +201,18 @@ const { product, images } = data;
           </div>
 
           <!-- Slideshow -->
-          <ProductSlideshow images={images} />
+          <ProductSlideshow images={images.map(({image}) => image)} />
 
           <section id="product-images">
-            {images.map((image) => (
-              <div class="product-image">
+            {images.map(({ id, image }) => (
+              <div class="product-image" id={id}>
                 <ProductImage src={image} alt={product.title} class="image" />
-                <button class="delete-image-btn" title="Delete image">
+                <button
+                  class="delete-image-btn"
+                  data-product-image-id={id}
+                  title="Delete image"
+                  type="button"
+                >
                   <Icon name="times" size={25} />
                 </button>
               </div>
@@ -237,6 +243,7 @@ const { product, images } = data;
     const form = document.getElementById("form") as HTMLFormElement;
 
     const sizesBtns: NodeListOf<HTMLButtonElement> = form.querySelectorAll(".btn-size");
+    const deleteImagesBtns: NodeListOf<HTMLButtonElement> = form.querySelectorAll(".delete-image-btn");
 
     if (!form) return;
 
@@ -265,5 +272,29 @@ const { product, images } = data;
         navigate(`/admin/products/${data.product.slug}`);
       }
     });
+
+    //* Delete Images
+    deleteImagesBtns.forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        const id = btn.getAttribute("data-product-image-id");
+
+        if (!id) return;
+
+        const { error } = await actions.deleteProductImage(id);
+
+        if (error) {
+          console.error(error);
+          alert(error);
+          return;
+        }
+
+        const element = document.getElementById(id) as HTMLElement;
+
+        if (!element) return;
+
+        element.remove();
+      });
+    });
+
   });
 </script>

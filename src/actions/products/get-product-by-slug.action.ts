@@ -45,11 +45,9 @@ const getProductBySlug = defineAction({
       .from(ProductImage)
       .where(eq(ProductImage.productId, product.id));
 
-    const images = productImages.map((img) => img.image);
-
     return {
       product,
-      images,
+      images: productImages,
     };
   },
 });
