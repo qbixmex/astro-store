@@ -15,18 +15,22 @@ if (error) {
 }
 
 const { product, images } = data;
+const socialImage = images[0].image.startsWith("http")
+  ? images[0].image
+  : `${import.meta.env.PUBLIC_URL}/public/assets/products/${images[0].image}`;
 ---
 
 <MainLayout
   title={`${product.title} - Astro Shop`}
   description={product.description}
   robots="index, follow"
-  >
+  image={socialImage}
+>
   <!-- image={image} -->
   <div class="content">
     <section class="wrapper">
       
-      <ProductSlideshow images={images} />
+      <ProductSlideshow images={images.map((asset) => asset.image)} />
 
       <section class="details">
         <h1>{product.title}</h1>
