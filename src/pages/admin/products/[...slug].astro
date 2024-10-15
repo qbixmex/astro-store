@@ -1,0 +1,356 @@
+---
+import ProductSlideshow from '@/components/products/product-slideshow.astro';
+import ProductImage from '@/components/products/ProductImage.astro';
+import MainLayout from '@/layouts/MainLayout.astro';
+import { Icon } from 'astro-icon/components';
+import { actions } from 'astro:actions';
+import '@/styles/admin.product-edit.css';
+
+const { slug } = Astro.params;
+
+const { data, error } = await actions.getProductBySlug(slug ?? '');
+
+if (error) {
+  return Astro.redirect('/admin/products');
+}
+
+const { product, images } = data;
+---
+
+<MainLayout
+  title="Product maintenance - Astro Shop"
+  description="Product maintenance page for Astro Shop"
+  robots="noindex, nofollow"
+>
+  <div class="content">
+    <h1>Dashboard</h1>
+
+    <div class="divisor"></div>
+
+    <form id="form">
+      <!-- General Data -->
+      <div class="mt-2">
+        <h2>General Data</h2>
+
+        {/* TITLE */}
+        <div class="mb-4">
+          <label for="title" class="form-label">Title</label>
+          <input
+            type="text"
+            id="title"
+            name="title"
+            value={product.title}
+            class="form-control"
+          />
+        </div>
+
+        {/* SLUG */}
+        <div class="mb-4">
+          <label for="slug" class="form-label">Slug</label>
+          <input
+            type="text"
+            id="slug"
+            name="slug"
+            value={product.slug}
+            class="form-control"
+          />
+        </div>
+
+        {/* DESCRIPTION */}
+        <div class="mb-4">
+          <label for="description" class="form-label">Description</label>
+          <textarea
+            id="description"
+            name="description"
+            class="form-textarea"
+            rows="8">{product.description}</textarea
+          >
+        </div>
+
+        <div id="options">
+          {/* PRICE */}
+          <div class="mb-4">
+            <label for="price" class="form-label">Price</label>
+            <input
+              type="number"
+              id="price"
+              name="price"
+              value={product.price}
+              class="form-control"
+              step="0.01"
+            />
+          </div>
+
+          {/* STOCK */}
+          <div class="mb-4">
+            <label for="stock" class="form-label">Stock</label>
+            <input
+              type="number"
+              id="stock"
+              name="stock"
+              value={product.stock}
+              class="form-control"
+            />
+          </div>
+        </div>
+
+        {/* TAGS */}
+        <div class="mb-4">
+          <label for="tags" class="form-label">
+            Tags <small class="text-gray-500">(Separate by commas)</small>
+          </label>
+          <input
+            type="text"
+            id="tags"
+            name="tags"
+            value={product.tags}
+            class="form-control"
+          />
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          {/* SEX */}
+          <div class="mb-4">
+            <label for="gender" class="form-label">Sex</label>
+            <select class="form-control" name="gender">
+              <option disabled selected>Select gender</option>
+              {
+                ['men', 'women', 'unisex', 'kid'].map((gender) => (
+                  <option
+                    value={gender}
+                    class="capitalize"
+                    selected={gender === product.gender}
+                  >
+                    {gender.toUpperCase()}
+                  </option>
+                ))
+              }
+            </select>
+          </div>
+
+          {/* TYPE */}
+          <div class="mb-4">
+            <label for="tags" class="form-label">Type</label>
+            <select class="form-control" name="type">
+              <option disabled selected>Select a type</option>
+              {
+                ['shirts', 'shirt', 'pants', 'hats', 'hoodies'].map((type) => (
+                  <option
+                    value={type}
+                    class="capitalize"
+                    selected={type === product.type}
+                  >
+                    {type.toUpperCase()}
+                  </option>
+                ))
+              }
+            </select>
+          </div>
+        </div>
+
+        {/* SIZES */}
+        <div class="mb-4">
+          <label for="sizes" class="form-label">Sizes</label>
+          <div class="flex">
+            {
+              ['XS', 'S', 'M', 'L', 'XL', 'XXL'].map((size) => (
+                <button
+                  class:list={["btn-size", {
+                    "active": product.sizes.includes(size),
+                  }]}
+                  type="button"
+                  onclick="this.classList.toggle('active')"
+                >{size}</button>
+              ))
+            }
+          </div>
+        </div>
+      </div>
+
+      {/* IMAGES */}
+      <div>
+        <!-- File upload -->
+        <div class="mt-4">
+          <!-- File input -->
+          <div id="file-input">
+            <label
+              id="drop-zone"
+              for="file-upload"
+              class="label-file-upload"
+            >
+              <div class="message-container">
+                <Icon id="drag-drop-icon" name="drag-drop" size={50} class="text-orange-500" />
+
+                <p class="drag-drop-message" id="selected-files-label">
+                  <span>Click here </span> or drag and drop files
+                </p>
+
+                <p class="file-format">SVG, PNG, JPG or GIF (max file size 800 x 400)</p>
+
+                <input
+                  id="file-upload"
+                  name="imageFiles"
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  style={{ display: "none" }}
+                />
+              </div>
+
+            </label>
+          </div>
+
+          <!-- Slideshow -->
+          <ProductSlideshow images={images.map(({image}) => image)} />
+
+          <section id="product-images">
+            {images.map(({ id, image }) => (
+              <div class="product-image" id={id}>
+                <ProductImage src={image} alt={product.title} class="image" />
+                <button
+                  class="delete-image-btn"
+                  data-product-image-id={id}
+                  title="Delete image"
+                  type="button"
+                >
+                  <Icon name="times" size={25} />
+                </button>
+              </div>
+            ))}
+          </section>
+        </div>
+      </div>
+
+      <section class="col-span-2 flex justify-between items-center">
+        {/* BACK */}
+        <a href="javascript:history.back()" class="back-btn">
+          <Icon name="left-chevron" size={32} />
+        </a>
+        {/* SAVE */}
+        <button class="save-btn">save</button>
+      </section>
+
+      <input type="hidden" name="id" value={product.id} />
+    </form>
+  </div>
+</MainLayout>
+
+<script>
+  import { actions } from "astro:actions";
+  import { navigate } from "astro:transitions/client";
+
+  document.addEventListener("astro:page-load", () => {
+    const form = document.getElementById("form") as HTMLFormElement;
+
+    const sizesBtns: NodeListOf<HTMLButtonElement> = form.querySelectorAll(".btn-size");
+    const deleteImagesBtns: NodeListOf<HTMLButtonElement> = form.querySelectorAll(".delete-image-btn");
+    const selectedFilesLabel = document.getElementById("selected-files-label") as HTMLElement;
+    const dropZone = document.getElementById("drop-zone") as HTMLLabelElement;
+    const imagesInput = document.getElementById("file-upload") as HTMLInputElement;
+    const dragDropIcon = document.getElementById("drag-drop-icon") as HTMLElement & SVGElement;
+
+    if (!form) return;
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      const selectedSizes = Array.from(sizesBtns)
+        .filter((btn) => btn.classList.contains("active"))
+        .map((btn) => btn.textContent?.trim())
+        .join(",");
+
+      const formData = new FormData(form);
+
+      formData.set("sizes", selectedSizes);
+
+      // const formValues = Object.fromEntries(formData.entries());
+
+      const { data, error } = await actions.createUpdateProduct(formData);
+
+      if (error) {
+        alert(error.message);
+        return;
+      }
+
+      if (data.ok) {
+        navigate(`/admin/products/${data.product.slug}`);
+      }
+    });
+
+    //* Delete Images
+    deleteImagesBtns.forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        const id = btn.getAttribute("data-product-image-id");
+
+        if (!id) return;
+
+        const { error } = await actions.deleteProductImage(id);
+
+        if (error) {
+          console.error(error);
+          alert(error);
+          return;
+        }
+
+        const element = document.getElementById(id) as HTMLElement;
+
+        if (!element) return;
+
+        element.remove();
+      });
+    });
+
+    const preventDefaults = (event: DragEvent) => {
+      event.preventDefault();
+      event.stopPropagation();
+    };
+
+    const hightLight = (event: DragEvent) => {
+      dropZone.classList.add("border-2", "border-dashed", "border-blue-50", "bg-blue-200/80");
+      dragDropIcon.classList.replace("text-orange-500", "text-slate-600");
+    };
+
+    const unHightLight = (event: DragEvent) => {
+      dropZone.classList.remove("border-2", "border-dashed", "border-blue-50", "bg-blue-200/80");
+      dragDropIcon.classList.replace("text-slate-600", "text-orange-500");
+    };
+
+    const createFileList = (files: File[]): FileList => {
+      const dataTransfer = new DataTransfer();
+      files.forEach((file) => dataTransfer.items.add(file));
+      return dataTransfer.files;
+    };
+
+    const handleFiles = (files: FileList) => {
+      // Filter valid images files type.
+      const validFiles = Array.from(files).filter(file => file.type.startsWith("image/"));
+      if (imagesInput && validFiles.length > 0) {
+        imagesInput.files = createFileList(validFiles);
+      }
+
+      selectedFilesLabel.innerHTML = `<b>${validFiles.length} selected file${validFiles.length === 1 ? "" : "s"}</b>`;
+    };
+
+    //* Drag & Drop
+    ([ "dragenter", "dragover", "dragleave", "drop" ] as const).forEach((eventName) => {
+      dropZone.addEventListener(eventName, preventDefaults);
+      document.body.addEventListener(eventName, preventDefaults);
+    });
+
+    ([ "dragenter", "dragover" ] as const).forEach((eventName) => {
+      dropZone.addEventListener(eventName, hightLight);
+    });
+
+    ([ "dragleave", "drop" ] as const).forEach((eventName) => {
+      dropZone.addEventListener(eventName, unHightLight);
+    });
+
+    //* Images
+    dropZone.addEventListener('drop', (event) => {
+      const files = event.dataTransfer?.files;
+      if (files) {
+        handleFiles(files);
+      }
+    });
+  });
+</script>

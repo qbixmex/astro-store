@@ -3,8 +3,6 @@
 interface User {
   email: string;
   name: string;
-  // avatar: string;
-  // emailVerified: boolean;
 }
 
 declare namespace App {
@@ -20,6 +18,9 @@ interface ImportMetaEnv {
   readonly PUBLIC_AUTH_TRUST_HOST: string;
   readonly PUBLIC_AUTH_SECRET: string;
   readonly PUBLIC_URL: string;
+  readonly CLOUDINARY_CLOUD_NAME: string;
+  readonly CLOUDINARY_API_KEY: string;
+  readonly CLOUDINARY_API_SECRET: string;
   // more env variables...
 }
 
