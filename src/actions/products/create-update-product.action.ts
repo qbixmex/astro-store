@@ -3,6 +3,7 @@ import { defineAction } from "astro:actions";
 import { getSession } from "auth-astro/server";
 import { z } from "astro:content";
 import { db, eq, Product } from "astro:db";
+import ImageUpload from "@/utils/image-upload";
 
 const MAX_FILE_SIZE = 5_242_880; // 5 mb
 const ACCEPTED_IMAGE_FILES = [
@@ -16,6 +17,7 @@ const ACCEPTED_IMAGE_FILES = [
 
 const createUpdateProduct = defineAction({
   accept: "form",
+
   input: z.object({
     id: z.string().optional(),
     title: z.string(),
@@ -38,6 +40,7 @@ const createUpdateProduct = defineAction({
         })
     ).optional(),
   }),
+
   handler: async (form, { request }) => {
     const session = await getSession(request);
     const user = session?.user;
@@ -82,7 +85,17 @@ const createUpdateProduct = defineAction({
       };
     }
 
-    console.log(imageFiles);
+    if (imageFiles && imageFiles.length > 0 ) {
+      imageFiles.forEach(async (image) => {
+
+        if (image.size <= 0) return; 
+
+        const result = await ImageUpload.load(image);
+
+        console.log(result);
+
+      });
+    }
 
     return {
       ok: true,
