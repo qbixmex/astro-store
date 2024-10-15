@@ -174,26 +174,26 @@ const { product, images } = data;
           <!-- File input -->
           <div id="file-input">
             <label
+              id="drop-zone"
               for="file-upload"
               class="label-file-upload"
-              id="drop-zone"
             >
               <div class="message-container">
-                <Icon name="drag-drop" size={50} class="text-orange-500" />
+                <Icon id="drag-drop-icon" name="drag-drop" size={50} class="text-orange-500" />
 
-                <p class="drag-drop-message" id="lbl-selected-files">
+                <p class="drag-drop-message" id="selected-files-label">
                   <span>Click here </span> or drag and drop files
                 </p>
 
                 <p class="file-format">SVG, PNG, JPG or GIF (max file size 800 x 400)</p>
-                <!-- class="hidden" -->
-                <!-- accept only images -->
+
                 <input
                   id="file-upload"
                   name="imageFiles"
                   type="file"
                   accept="image/*"
                   multiple
+                  style={{ display: "none" }}
                 />
               </div>
 
@@ -244,6 +244,10 @@ const { product, images } = data;
 
     const sizesBtns: NodeListOf<HTMLButtonElement> = form.querySelectorAll(".btn-size");
     const deleteImagesBtns: NodeListOf<HTMLButtonElement> = form.querySelectorAll(".delete-image-btn");
+    const selectedFilesLabel = document.getElementById("selected-files-label") as HTMLElement;
+    const dropZone = document.getElementById("drop-zone") as HTMLLabelElement;
+    const imagesInput = document.getElementById("file-upload") as HTMLInputElement;
+    const dragDropIcon = document.getElementById("drag-drop-icon") as HTMLElement & SVGElement;
 
     if (!form) return;
 
@@ -296,5 +300,57 @@ const { product, images } = data;
       });
     });
 
+    const preventDefaults = (event: DragEvent) => {
+      event.preventDefault();
+      event.stopPropagation();
+    };
+
+    const hightLight = (event: DragEvent) => {
+      dropZone.classList.add("border-2", "border-dashed", "border-blue-50", "bg-blue-200/80");
+      dragDropIcon.classList.replace("text-orange-500", "text-slate-600");
+    };
+
+    const unHightLight = (event: DragEvent) => {
+      dropZone.classList.remove("border-2", "border-dashed", "border-blue-50", "bg-blue-200/80");
+      dragDropIcon.classList.replace("text-slate-600", "text-orange-500");
+    };
+
+    const createFileList = (files: File[]): FileList => {
+      const dataTransfer = new DataTransfer();
+      files.forEach((file) => dataTransfer.items.add(file));
+      return dataTransfer.files;
+    };
+
+    const handleFiles = (files: FileList) => {
+      // Filter valid images files type.
+      const validFiles = Array.from(files).filter(file => file.type.startsWith("image/"));
+      if (imagesInput && validFiles.length > 0) {
+        imagesInput.files = createFileList(validFiles);
+      }
+
+      selectedFilesLabel.innerHTML = `<b>${validFiles.length} selected file${validFiles.length === 1 ? "" : "s"}</b>`;
+    };
+
+    //* Drag & Drop
+    ([ "dragenter", "dragover", "dragleave", "drop" ] as const).forEach((eventName) => {
+      dropZone.addEventListener(eventName, preventDefaults);
+      document.body.addEventListener(eventName, preventDefaults);
+    });
+
+    ([ "dragenter", "dragover" ] as const).forEach((eventName) => {
+      dropZone.addEventListener(eventName, hightLight);
+    });
+
+    ([ "dragleave", "drop" ] as const).forEach((eventName) => {
+      dropZone.addEventListener(eventName, unHightLight);
+    });
+
+    //* Images
+    dropZone.addEventListener('drop', (event) => {
+      const files = event.dataTransfer?.files;
+      if (files) {
+        handleFiles(files);
+      }
+    });
   });
 </script>
