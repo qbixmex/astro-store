@@ -2,7 +2,7 @@ import crypto from "node:crypto";
 import { defineAction } from "astro:actions";
 import { getSession } from "auth-astro/server";
 import { z } from "astro:content";
-import { db, eq, Product } from "astro:db";
+import { db, eq, Product, ProductImage } from "astro:db";
 import ImageUpload from "@/utils/image-upload";
 
 const MAX_FILE_SIZE = 5_242_880; // 5 mb
@@ -58,44 +58,54 @@ const createUpdateProduct = defineAction({
     //* Slugify the slug
     formWithoutId.slug = formWithoutId.slug.trim().replaceAll(" ", "-").toLowerCase();
 
+    const queries: any = [];
+
     if (!form.id) {
       //* Create Product
-      const result = await db.insert(Product).values({
-        id,
-        user: user.id!,
-        ...formWithoutId,
-      });
-
-      if (result.rowsAffected === 0) {
-        throw new Error("Failed to create product");
-      };
+      queries.push(db.insert(Product).values({ id, user: user.id!, ...formWithoutId }));
     } else {
       //* Update Product
-      const result = await db
-        .update(Product)
-        .set({
-          user: user.id!,
-          ...formWithoutId,
-        })
-        .where(
-          eq(Product.id, id)
-        );
-      if (result.rowsAffected === 0) {
-        throw new Error("Failed to update product");
-      };
+      queries.push(
+        db
+          .update(Product)
+          .set({ user: user.id!, ...formWithoutId })
+          .where(eq(Product.id, id))
+      );
     }
 
-    if (imageFiles && imageFiles.length > 0 ) {
-      imageFiles.forEach(async (image) => {
+    const productImages: {
+      secureUrl: string;
+      publicId: string;
+    }[] = [];
 
-        if (image.size <= 0) return; 
+    if (
+      imageFiles !== undefined
+      && imageFiles.length > 0
+      && imageFiles[0].size > 0
+    ) {
+      const uploadApiResponses = await Promise.all(
+        imageFiles.map((file) => ImageUpload.load(file))
+      );
 
-        const result = await ImageUpload.load(image);
+      uploadApiResponses.forEach((response) => {
+        return productImages.push({
+          secureUrl: response.secure_url,
+          publicId: response.public_id
+        });
+      });
 
-        console.log(result);
-
+      productImages.forEach(image => {
+        const imageRecord = {
+          id: crypto.randomUUID(),
+          image: image.secureUrl,
+          productId: id,
+          publicId: image.publicId,
+        };
+        queries.push(db.insert(ProductImage).values(imageRecord));
       });
     }
+
+    await db.batch(queries);
 
     return {
       ok: true,
